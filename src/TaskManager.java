@@ -62,7 +62,7 @@ public class TaskManager {
         removeAllTasksOfCertainType(EpicTask.class);
     }
 
-    public void removeAllStandartTasks() {
+    public void removeAllStandardTasks() {
         removeAllTasksOfCertainType(Task.class);
     }
 
