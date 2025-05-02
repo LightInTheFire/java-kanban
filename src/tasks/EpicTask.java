@@ -23,9 +23,14 @@ public final class EpicTask extends BaseTask {
         return subTasks;
     }
 
+    @Override
+    public void setStatus(TaskStatus status) {
+        calculateEpicStatus();
+    }
+
     public void calculateEpicStatus() {
         if (subTasks.size() == 0) {
-            setStatus(TaskStatus.NEW);
+            super.setStatus(TaskStatus.NEW);
             return;
         }
         boolean isAllSubTasksDone = true;
@@ -36,9 +41,9 @@ public final class EpicTask extends BaseTask {
             }
         }
         if (isAllSubTasksDone) {
-            setStatus(TaskStatus.DONE);
+            super.setStatus(TaskStatus.DONE);
         } else {
-            setStatus(TaskStatus.IN_PROGRESS);
+            super.setStatus(TaskStatus.IN_PROGRESS);
         }
     }
 }
