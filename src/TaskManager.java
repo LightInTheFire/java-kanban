@@ -4,6 +4,7 @@ import tasks.SubTask;
 import tasks.Task;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TaskManager {
@@ -12,6 +13,37 @@ public class TaskManager {
 
     public TaskManager() {
         this.tasks = new HashMap<>();
+    }
+
+    public Map<Integer, BaseTask> getTasks() {
+        return tasks;
+    }
+
+    public BaseTask getById(int id) {
+        return tasks.get(id);
+    }
+
+    public void removeById(int id) {
+        tasks.remove(id);
+    }
+
+    public void addTask(BaseTask task) {
+        task.setId(idCounter);
+        tasks.put(idCounter, task);
+
+        idCounter++;
+    }
+
+    public void updateTask(BaseTask task) {
+        tasks.put(task.getId(), task);
+    }
+
+    public List<SubTask> getAllSubtasksOfEpic(int id) {
+        return switch (tasks.get(id)) {
+            case EpicTask epicTask -> epicTask.getSubTasks();
+            case SubTask subTask -> null;
+            case Task task -> null;
+        };
     }
 
     public Map<Integer, EpicTask> getAllEpicsTasks() {
@@ -48,7 +80,7 @@ public class TaskManager {
 
         for (BaseTask task : tasks.values()) {
             if (taskClass.isInstance(task)) {
-                map.put(task.id(), (T) task);
+                map.put(task.getId(), (T) task);
             }
         }
 
