@@ -35,7 +35,14 @@ public class TaskManager {
     }
 
     public void updateTask(BaseTask task) {
-        tasks.put(task.getId(), task);
+        switch (task) {
+            case EpicTask epicTask -> {
+                epicTask.calculateEpicStatus();
+                tasks.put(epicTask.getId(), epicTask);
+            }
+            case SubTask subTask -> tasks.put(subTask.getId(), subTask);
+            case Task standardTask -> tasks.put(task.getId(), standardTask);
+        }
     }
 
     public List<SubTask> getAllSubtasksOfEpic(int id) {
