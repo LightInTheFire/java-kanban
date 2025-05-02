@@ -1,29 +1,26 @@
 package tasks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public record EpicTask(String title,
-                       String description,
-                       int id,
-                       TaskStatus status,
-                       List<SubTask> subTasks)
-        implements BaseTask {
+public final class EpicTask extends BaseTask {
+    private List<SubTask> subTasks;
 
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof EpicTask epicTask)) return false;
-
-        return Objects.equals(title, epicTask.title)
-                && status == epicTask.status
-                && Objects.equals(description, epicTask.description);
+    public EpicTask(String title, String description, Integer id, TaskStatus status) {
+        super(title, description, id, status);
+        this.subTasks = new ArrayList<>();
     }
 
-    @Override
-    public int hashCode() {
-        int result = Objects.hashCode(title);
-        result = 31 * result + Objects.hashCode(description);
-        result = 31 * result + Objects.hashCode(status);
-        return result;
+    public void addSubTask(SubTask subTask) {
+        subTasks.add(subTask);
+    }
+
+    public void  removeSubTask(SubTask subTask) {
+        subTasks.remove(subTask);
+    }
+
+    public List<SubTask> getSubTasks() {
+        return subTasks;
     }
 }
