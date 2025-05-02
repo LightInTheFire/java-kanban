@@ -7,7 +7,7 @@ public sealed abstract class BaseTask
     private String title;
     private String description;
     private Integer id;
-    private  TaskStatus status;
+    private TaskStatus status;
 
     public BaseTask(String title, String description, Integer id, TaskStatus status) {
         this.title = title;

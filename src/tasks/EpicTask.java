@@ -15,7 +15,7 @@ public final class EpicTask extends BaseTask {
         subTasks.add(subTask);
     }
 
-    public void  removeSubTask(SubTask subTask) {
+    public void removeSubTask(SubTask subTask) {
         subTasks.remove(subTask);
     }
 

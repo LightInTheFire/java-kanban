@@ -40,7 +40,16 @@ public class TaskManager {
                 epicTask.calculateEpicStatus();
                 tasks.put(epicTask.getId(), epicTask);
             }
-            case SubTask subTask -> tasks.put(subTask.getId(), subTask);
+            case SubTask subTask -> {
+                SubTask currentSubTask = (SubTask) tasks.get(subTask.getId());
+                EpicTask epicTaskOfSubtask = (EpicTask) tasks.get(subTask.getEpicTaskId());
+
+                epicTaskOfSubtask.removeSubTask(currentSubTask);
+                epicTaskOfSubtask.addSubTask(subTask);
+                epicTaskOfSubtask.calculateEpicStatus();
+
+                tasks.put(subTask.getId(), subTask);
+            }
             case Task standardTask -> tasks.put(task.getId(), standardTask);
         }
     }
