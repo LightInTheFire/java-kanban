@@ -2,7 +2,6 @@ package tasks;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public final class EpicTask extends BaseTask {
     private List<SubTask> subTasks;
@@ -22,5 +21,24 @@ public final class EpicTask extends BaseTask {
 
     public List<SubTask> getSubTasks() {
         return subTasks;
+    }
+
+    public void calculateEpicStatus() {
+        if (subTasks.size() == 0) {
+            setStatus(TaskStatus.NEW);
+            return;
+        }
+        boolean isAllSubTasksDone = true;
+        for (SubTask subTask : subTasks) {
+            if (subTask.getStatus() != TaskStatus.DONE) {
+                isAllSubTasksDone = false;
+                break;
+            }
+        }
+        if (isAllSubTasksDone) {
+            setStatus(TaskStatus.DONE);
+        } else {
+            setStatus(TaskStatus.IN_PROGRESS);
+        }
     }
 }
