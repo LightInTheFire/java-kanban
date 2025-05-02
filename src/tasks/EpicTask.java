@@ -1,11 +1,13 @@
 package tasks;
 
+import java.util.List;
 import java.util.Objects;
 
 public record EpicTask(String title,
                        String description,
                        int id,
-                       TaskStatus status)
+                       TaskStatus status,
+                       List<SubTask> subTasks)
         implements BaseTask {
 
     @Override
