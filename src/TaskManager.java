@@ -8,25 +8,42 @@ import java.util.Map;
 
 public class TaskManager {
     private static int idCounter = 0;
-    private Map<Integer, BaseTask> tasks;
+    private final Map<Integer, BaseTask> tasks;
 
     public TaskManager() {
         this.tasks = new HashMap<>();
     }
 
     public Map<Integer, EpicTask> getAllEpicsTasks() {
-        return getTasks(EpicTask.class);
+        return getTasksOfCertainType(EpicTask.class);
     }
 
     public Map<Integer, Task> getAllStandartTasks() {
-        return getTasks(Task.class);
+        return getTasksOfCertainType(Task.class);
     }
 
     public Map<Integer, SubTask> getAllSubTasks() {
-        return getTasks(SubTask.class);
+        return getTasksOfCertainType(SubTask.class);
     }
 
-    private <T extends BaseTask> Map<Integer, T> getTasks(Class<T> taskClass) {
+    public void removeAllEpicsTasks() {
+        removeAllTasksOfCertainType(EpicTask.class);
+    }
+
+    public void removeAllStandartTasks() {
+        removeAllTasksOfCertainType(Task.class);
+    }
+
+    public void removeAllSubTasks() {
+        removeAllTasksOfCertainType(SubTask.class);
+    }
+
+    private <T extends BaseTask> void removeAllTasksOfCertainType(Class<T> taskClass) {
+        tasks.entrySet()
+                .removeIf(pair -> taskClass.isInstance(pair.getValue()));
+    }
+
+    private <T extends BaseTask> Map<Integer, T> getTasksOfCertainType(Class<T> taskClass) {
         Map<Integer, T> map = new HashMap<>();
 
         for (BaseTask task : tasks.values()) {
@@ -37,4 +54,5 @@ public class TaskManager {
 
         return map;
     }
+
 }
