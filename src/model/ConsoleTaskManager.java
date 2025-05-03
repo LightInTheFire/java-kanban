@@ -94,6 +94,16 @@ public class ConsoleTaskManager {
     }
 
     private void deleteTaskById() {
+        System.out.println("Введите id задачи:");
+        int id;
+        try {
+            id = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Не число!");
+            return;
+        }
+
+        taskManager.removeById(id);
     }
 
     private void updateTask() {
