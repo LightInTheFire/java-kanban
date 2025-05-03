@@ -117,7 +117,15 @@ public class ConsoleTaskManager {
     }
 
     private BaseTask createNewSubTask() {
-        return null;
+        BaseTask baseTask = createNewStandardTask();
+        System.out.println("Введите id эпика(или пустую строку если его еще нет):");
+        Integer epicId = null;
+        try {
+            epicId = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException ignored) {
+        }
+        return new SubTask(baseTask.getTitle(),
+                baseTask.getDescription(), null, baseTask.getStatus(), epicId);
     }
 
     private BaseTask createNewStandardTask() {
