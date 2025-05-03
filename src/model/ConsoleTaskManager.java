@@ -32,8 +32,7 @@ public class ConsoleTaskManager {
 
             switch (option) {
                 case GET_ALL_TASKS -> printAllTasks();
-                case GET_ALL_TASKS_BY_TYPE -> {
-                }
+                case GET_ALL_TASKS_BY_TYPE -> printAllTasksByType();
                 case GET_TASK_BY_ID -> {
                 }
                 case GET_ALL_SUBTASKS_OF_EPIC -> {
@@ -54,6 +53,28 @@ public class ConsoleTaskManager {
         }
     }
 
+    private void printAllTasksByType() {
+        System.out.println("Какой тип задач вы хотите увидеть?");
+        System.out.println("""
+                1. Обычные задачи
+                2. Подзадачи
+                3. Эпики""");
+        String input = scanner.nextLine();
+        switch (input) {
+            case "1" -> taskManager.getAllStandartTasks()
+                    .forEach((id, task)
+                            -> System.out.printf("id = %d , %s\n", id, task));
+            case "2" -> taskManager.getAllSubTasks()
+                    .forEach((id , subTask)
+                            -> System.out.printf("id = %d, epicId = %d , %s\n", id, subTask.getEpicTaskId(), subTask));
+            case "3" -> taskManager.getAllEpicsTasks()
+                    .forEach((id, epicTask)
+                            -> System.out.printf("%s \n id = %d , %s\n",epicTask.getSubTasks(), id, epicTask));
+            default -> System.out.println("Неверный ввод.");
+        }
+
+    }
+
     private void printAllTasks() {
         for (Map.Entry<Integer, BaseTask> taskEntry : taskManager.getTasks().entrySet()) {
             switch (taskEntry.getValue()) {
@@ -66,7 +87,7 @@ public class ConsoleTaskManager {
                     System.out.println(taskEntry.getKey());
                     System.out.printf("Epic id %d  + %s", subTask.getEpicTaskId(), subTask);
                 }
-                case Task task -> System.out.printf("%d \n%s", taskEntry.getKey(), task);
+                case Task task -> System.out.printf("id = %d \n%s", taskEntry.getKey(), task);
             }
         }
     }
