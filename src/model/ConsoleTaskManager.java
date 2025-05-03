@@ -1,9 +1,6 @@
 package model;
 
-import tasks.BaseTask;
-import tasks.EpicTask;
-import tasks.SubTask;
-import tasks.Task;
+import tasks.*;
 
 import java.util.List;
 import java.util.Map;
@@ -60,7 +57,7 @@ public class ConsoleTaskManager {
 
         List<SubTask> allSubtasksOfEpic = taskManager.getAllSubtasksOfEpic(id);
         if (allSubtasksOfEpic == null) {
-            System.out.println("Это не эпик");
+            System.out.println("Это не эпик.");
             return;
         }
         allSubtasksOfEpic.forEach(System.out::println);
@@ -71,10 +68,7 @@ public class ConsoleTaskManager {
 
     private void deleteAllTasksByType() {
         System.out.println("Какой тип задач вы хотите удалить?");
-        System.out.println("""
-                1. Обычные задачи
-                2. Подзадачи
-                3. Эпики""");
+        printTaskTypes();
         String input = scanner.nextLine();
 
         switch (input) {
@@ -85,6 +79,13 @@ public class ConsoleTaskManager {
         }
     }
 
+    private static void printTaskTypes() {
+        System.out.println("""
+                1. Обычные задачи
+                2. Подзадачи
+                3. Эпики""");
+    }
+
     private void deleteTaskById() {
     }
 
@@ -92,26 +93,56 @@ public class ConsoleTaskManager {
     }
 
     private void createNewTask() {
+        System.out.println("Какую задачу вы хотите создать?");
+        printTaskTypes();
+        String input = scanner.nextLine();
+        BaseTask newTask = switch (input) {
+            case "1" -> createNewStandardTask();
+            case "2" -> createNewSubTask();
+            case "3" -> createNewEpic();
+            default -> null;
+        };
 
+        if (newTask == null) {
+            System.out.println("Произошла ошибка при создании задачи.");
+            return;
+        }
+
+        taskManager.addTask(newTask);
+        System.out.println("Задача добавлена успешно.");
+    }
+
+    private BaseTask createNewEpic() {
+        return null;
+    }
+
+    private BaseTask createNewSubTask() {
+        return null;
+    }
+
+    private BaseTask createNewStandardTask() {
+        System.out.println("Введите название задачи:");
+        String title = scanner.nextLine();
+        System.out.println("Введите описание задачи:");
+        String description = scanner.nextLine();
+        TaskStatus status = TaskStatus.NEW;
+        return new Task(title, description, null, status);
     }
 
     private void printAllTasksByType() {
         System.out.println("Какой тип задач вы хотите увидеть?");
-        System.out.println("""
-                1. Обычные задачи
-                2. Подзадачи
-                3. Эпики""");
+        printTaskTypes();
         String input = scanner.nextLine();
         switch (input) {
             case "1" -> taskManager.getAllStandartTasks()
                     .forEach((id, task)
-                            -> System.out.printf("id = %d , %s\n", id, task));
+                            -> System.out.printf("id = %d \n%s\n", id, task));
             case "2" -> taskManager.getAllSubTasks()
-                    .forEach((id , subTask)
-                            -> System.out.printf("id = %d, epicId = %d , %s\n", id, subTask.getEpicTaskId(), subTask));
+                    .forEach((id, subTask)
+                            -> System.out.printf("id = %d, epicId = %d \n%s\n", id, subTask.getEpicTaskId(), subTask));
             case "3" -> taskManager.getAllEpicsTasks()
                     .forEach((id, epicTask)
-                            -> System.out.printf("%s \n id = %d , %s\n",epicTask.getSubTasks(), id, epicTask));
+                            -> System.out.printf("%s \n id = %d \n%s\n", epicTask.getSubTasks(), id, epicTask));
             default -> System.out.println("Неверный ввод.");
         }
     }
@@ -128,7 +159,7 @@ public class ConsoleTaskManager {
                     System.out.println(taskEntry.getKey());
                     System.out.printf("Epic id %d  + %s", subTask.getEpicTaskId(), subTask);
                 }
-                case Task task -> System.out.printf("id = %d \n%s", taskEntry.getKey(), task);
+                case Task task -> System.out.printf("id = %d \n%s\n", taskEntry.getKey(), task);
             }
         }
     }
