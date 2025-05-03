@@ -33,24 +33,50 @@ public class ConsoleTaskManager {
             switch (option) {
                 case GET_ALL_TASKS -> printAllTasks();
                 case GET_ALL_TASKS_BY_TYPE -> printAllTasksByType();
-                case GET_TASK_BY_ID -> {
-                }
-                case GET_ALL_SUBTASKS_OF_EPIC_BY_ID -> {
-                }
-                case DELETE_ALL_TASKS_BY_TYPE -> {
-                }
-                case CREATE_NEW_TASK -> {
-                }
-                case UPDATE_TASK -> {
-                }
-                case DELETE_TASK_BY_ID -> {
-                }
+                case GET_TASK_BY_ID -> getTaskById();
+                case GET_ALL_SUBTASKS_OF_EPIC_BY_ID -> getAllSubtasksOfEpicById();
+                case DELETE_ALL_TASKS_BY_TYPE -> deleteAllTasksByType();
+                case CREATE_NEW_TASK -> createNewTask();
+                case UPDATE_TASK -> updateTask();
+                case DELETE_TASK_BY_ID -> deleteTaskById();
                 case EXIT_APP -> {
                     System.out.println("Выход из приложения");
                     return;
                 }
             }
         }
+    }
+
+    private void getAllSubtasksOfEpicById() {
+    }
+
+    private void getTaskById() {
+    }
+
+    private void deleteAllTasksByType() {
+        System.out.println("Какой тип задач вы хотите удалить?");
+        System.out.println("""
+                1. Обычные задачи
+                2. Подзадачи
+                3. Эпики""");
+        String input = scanner.nextLine();
+
+        switch (input) {
+            case "1" -> taskManager.removeAllStandardTasks();
+            case "2" -> taskManager.removeAllSubTasks();
+            case "3" -> taskManager.removeAllEpicsTasks();
+            default -> System.out.println("Неверный ввод.");
+        }
+    }
+
+    private void deleteTaskById() {
+    }
+
+    private void updateTask() {
+    }
+
+    private void createNewTask() {
+
     }
 
     private void printAllTasksByType() {
@@ -72,7 +98,6 @@ public class ConsoleTaskManager {
                             -> System.out.printf("%s \n id = %d , %s\n",epicTask.getSubTasks(), id, epicTask));
             default -> System.out.println("Неверный ввод.");
         }
-
     }
 
     private void printAllTasks() {
