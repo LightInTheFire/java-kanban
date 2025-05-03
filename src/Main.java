@@ -1,4 +1,4 @@
-import model.ConsoleTaskManager;
+import view.ConsoleTaskManager;
 import model.TaskManager;
 
 import java.util.Scanner;
