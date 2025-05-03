@@ -1,3 +1,5 @@
+package model;
+
 import tasks.BaseTask;
 import tasks.EpicTask;
 import tasks.SubTask;
