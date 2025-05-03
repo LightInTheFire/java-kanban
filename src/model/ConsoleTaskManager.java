@@ -79,13 +79,6 @@ public class ConsoleTaskManager {
         }
     }
 
-    private static void printTaskTypes() {
-        System.out.println("""
-                1. Обычные задачи
-                2. Подзадачи
-                3. Эпики""");
-    }
-
     private void deleteTaskById() {
     }
 
@@ -113,7 +106,8 @@ public class ConsoleTaskManager {
     }
 
     private BaseTask createNewEpic() {
-        return null;
+        BaseTask baseTask = createNewStandardTask();
+        return new EpicTask(baseTask.getTitle(), baseTask.getDescription(), null, baseTask.getStatus());
     }
 
     private BaseTask createNewSubTask() {
@@ -170,6 +164,13 @@ public class ConsoleTaskManager {
                 case Task task -> System.out.printf("id = %d \n%s\n", taskEntry.getKey(), task);
             }
         }
+    }
+
+    private static void printTaskTypes() {
+        System.out.println("""
+                1. Обычные задачи
+                2. Подзадачи
+                3. Эпики""");
     }
 
     private void printMenu() {
