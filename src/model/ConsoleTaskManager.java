@@ -35,7 +35,7 @@ public class ConsoleTaskManager {
                 case GET_ALL_TASKS_BY_TYPE -> printAllTasksByType();
                 case GET_TASK_BY_ID -> {
                 }
-                case GET_ALL_SUBTASKS_OF_EPIC -> {
+                case GET_ALL_SUBTASKS_OF_EPIC_BY_ID -> {
                 }
                 case DELETE_ALL_TASKS_BY_TYPE -> {
                 }
