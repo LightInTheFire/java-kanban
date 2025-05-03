@@ -26,7 +26,19 @@ public class TaskManager {
     }
 
     public void removeById(int id) {
-        tasks.remove(id);
+        BaseTask removedTask = tasks.remove(id);
+        switch (removedTask) {
+            case EpicTask ignored -> {
+            }
+            case SubTask subTask -> {
+                Integer epicTaskId = subTask.getEpicTaskId();
+                EpicTask epicTask = (EpicTask) tasks.get(epicTaskId);
+                epicTask.removeSubTask(subTask);
+                epicTask.calculateEpicStatus();
+            }
+            case Task ignored -> {
+            }
+        }
     }
 
     public void addTask(BaseTask task) {
@@ -52,7 +64,7 @@ public class TaskManager {
 
                 tasks.put(subTask.getId(), subTask);
             }
-            case Task standardTask -> tasks.put(task.getId(), standardTask);
+            case Task standardTask -> tasks.put(standardTask.getId(), standardTask);
         }
     }
 
