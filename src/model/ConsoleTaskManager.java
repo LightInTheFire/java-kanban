@@ -47,13 +47,8 @@ public class ConsoleTaskManager {
 
     private void getAllSubtasksOfEpicById() {
         System.out.println("Введите id Эпика");
-        int id;
-        try {
-            id = Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Не число!");
-            return;
-        }
+        Integer id = getIdFromUser();
+        if (id == null) return;
 
         List<SubTask> allSubtasksOfEpic = taskManager.getAllSubtasksOfEpic(id);
         if (allSubtasksOfEpic == null) {
@@ -65,13 +60,8 @@ public class ConsoleTaskManager {
 
     private void getTaskById() {
         System.out.println("Введите id задачи:");
-        int id;
-        try {
-            id = Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Не число!");
-            return;
-        }
+        Integer id = getIdFromUser();
+        if (id == null) return;
         BaseTask task = taskManager.getById(id);
         if (task == null) {
             System.out.println("Задачи с таким id нет.");
@@ -95,18 +85,17 @@ public class ConsoleTaskManager {
 
     private void deleteTaskById() {
         System.out.println("Введите id задачи:");
-        int id;
-        try {
-            id = Integer.parseInt(scanner.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Не число!");
-            return;
-        }
+        Integer id = getIdFromUser();
+        if (id == null) return;
 
         taskManager.removeById(id);
     }
 
     private void updateTask() {
+        System.out.println("Введите id задачи которую хотите обновить");
+        Integer id = getIdFromUser();
+        if (id == null) return;
+        System.out.println(id);
     }
 
     private void createNewTask() {
@@ -153,6 +142,17 @@ public class ConsoleTaskManager {
         String description = scanner.nextLine();
         TaskStatus status = TaskStatus.NEW;
         return new Task(title, description, null, status);
+    }
+
+    private Integer getIdFromUser() {
+        int id;
+        try {
+            id = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Не число!");
+            return null;
+        }
+        return id;
     }
 
     private void printAllTasksByType() {
