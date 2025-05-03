@@ -19,6 +19,9 @@ public final class EpicTask extends BaseTask {
         subTasks.remove(subTask);
     }
 
+    public void removeSubTaskById(Integer id) {
+        subTasks.removeIf(subTask -> subTask.getId().equals(id));
+    }
     public List<SubTask> getSubTasks() {
         return subTasks;
     }
