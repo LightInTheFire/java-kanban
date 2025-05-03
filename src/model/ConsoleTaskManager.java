@@ -64,6 +64,20 @@ public class ConsoleTaskManager {
     }
 
     private void getTaskById() {
+        System.out.println("Введите id задачи:");
+        int id;
+        try {
+            id = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Не число!");
+            return;
+        }
+        BaseTask task = taskManager.getById(id);
+        if (task == null) {
+            System.out.println("Задачи с таким id нет.");
+            return;
+        }
+        System.out.println(task);
     }
 
     private void deleteAllTasksByType() {
