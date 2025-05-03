@@ -5,6 +5,7 @@ import tasks.EpicTask;
 import tasks.SubTask;
 import tasks.Task;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -48,6 +49,21 @@ public class ConsoleTaskManager {
     }
 
     private void getAllSubtasksOfEpicById() {
+        System.out.println("Введите id Эпика");
+        int id;
+        try {
+            id = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Не число!");
+            return;
+        }
+
+        List<SubTask> allSubtasksOfEpic = taskManager.getAllSubtasksOfEpic(id);
+        if (allSubtasksOfEpic == null) {
+            System.out.println("Это не эпик");
+            return;
+        }
+        allSubtasksOfEpic.forEach(System.out::println);
     }
 
     private void getTaskById() {
