@@ -307,7 +307,7 @@ public class ConsoleTaskManager {
                 }
                 case SubTask subTask -> {
                     System.out.println(taskEntry.getKey());
-                    System.out.printf("Epic id %d  + %s", subTask.getEpicTaskId(), subTask);
+                    System.out.printf("Epic id %d  + %s\n", subTask.getEpicTaskId(), subTask);
                 }
                 case Task task -> System.out.printf("id = %d \n%s\n", taskEntry.getKey(), task);
             }
