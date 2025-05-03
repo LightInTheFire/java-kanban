@@ -1,5 +1,7 @@
-package model;
+package view;
 
+import model.MenuOption;
+import model.TaskManager;
 import tasks.*;
 
 import java.util.List;
@@ -47,7 +49,7 @@ public class ConsoleTaskManager {
 
     private void getAllSubtasksOfEpicById() {
         System.out.println("Введите id Эпика");
-        Integer id = getIdFromUser();
+        Integer id = getNumberFromUser();
         if (id == null) return;
 
         List<SubTask> allSubtasksOfEpic = taskManager.getAllSubtasksOfEpic(id);
@@ -60,7 +62,7 @@ public class ConsoleTaskManager {
 
     private void getTaskById() {
         System.out.println("Введите id задачи:");
-        Integer id = getIdFromUser();
+        Integer id = getNumberFromUser();
         if (id == null) return;
         BaseTask task = taskManager.getById(id);
         if (task == null) {
@@ -85,7 +87,7 @@ public class ConsoleTaskManager {
 
     private void deleteTaskById() {
         System.out.println("Введите id задачи:");
-        Integer id = getIdFromUser();
+        Integer id = getNumberFromUser();
         if (id == null) return;
 
         taskManager.removeById(id);
@@ -93,9 +95,131 @@ public class ConsoleTaskManager {
 
     private void updateTask() {
         System.out.println("Введите id задачи которую хотите обновить");
-        Integer id = getIdFromUser();
+        Integer id = getNumberFromUser();
         if (id == null) return;
-        System.out.println(id);
+
+        BaseTask task = taskManager.getById(id);
+        if (task == null) {
+            System.out.println("Задачи с таким id нет.");
+            return;
+        }
+
+        System.out.println("Что вы хотите обновить?");
+        printTaskFields(task);
+        Integer fieldNumberToUpdate = getNumberFromUser();
+        if (fieldNumberToUpdate == null) return;
+
+
+        BaseTask updatedTask = switch (task) {
+            case EpicTask epicTask -> handleEpicTaskUpdate(epicTask, fieldNumberToUpdate);
+            case SubTask subTask -> handleSubTaskUpdate(subTask, fieldNumberToUpdate);
+            case Task standardTask -> handleStandardTaskUpdate(standardTask, fieldNumberToUpdate);
+        };
+        taskManager.updateTask(updatedTask);
+    }
+
+    private BaseTask handleStandardTaskUpdate(Task standardTask, Integer fieldNumberToUpdate) {
+        return switch (fieldNumberToUpdate) {
+            case 1 -> updateTitle(standardTask);
+            case 2 -> updateDescription(standardTask);
+            case 3 -> updateStatus(standardTask);
+            default -> throw new IllegalStateException("Unexpected value: " + fieldNumberToUpdate);
+        };
+    }
+
+    private BaseTask handleSubTaskUpdate(SubTask subTask, Integer fieldNumberToUpdate) {
+        return switch (fieldNumberToUpdate) {
+            case 1 -> updateTitle(subTask);
+            case 2 -> updateDescription(subTask);
+            case 3 -> updateStatus(subTask);
+            case 4 -> updateEpicId(subTask);
+            default -> throw new IllegalStateException("Unexpected value: " + fieldNumberToUpdate);
+        };
+    }
+
+    private BaseTask updateEpicId(SubTask subTask) {
+        System.out.println("Введите новый ID эпика:");
+        Integer newEpicId = getNumberFromUser();
+        if (newEpicId == null) return subTask;
+        BaseTask task = taskManager.getById(newEpicId);
+        if (task instanceof EpicTask epicTask) {
+            epicTask.setId(newEpicId);
+        } else {
+            System.out.println("Нет эпика с таким id.");
+        }
+        return subTask;
+    }
+
+    private BaseTask handleEpicTaskUpdate(EpicTask epicTask, Integer fieldNumberToUpdate) {
+        return switch (fieldNumberToUpdate) {
+            case 1 -> updateTitle(epicTask);
+            case 2 -> updateDescription(epicTask);
+            case 3 -> updateStatus(epicTask);
+            case 4 -> addSubTaskToEpic(epicTask);
+            case 5 -> removeSubTaskFromEpic(epicTask);
+            default -> throw new IllegalStateException("Unexpected value: " + fieldNumberToUpdate);
+        };
+    }
+
+    private BaseTask removeSubTaskFromEpic(EpicTask epicTask) {
+        System.out.println("Введите id подзадачи");
+        Integer id = getNumberFromUser();
+        if (id == null) return epicTask;
+
+        BaseTask task = taskManager.getById(id);
+        if (task == null) return epicTask;
+
+        if (task instanceof SubTask subTask) {
+            subTask.setId(null);
+            epicTask.removeSubTaskById(id);
+        }
+        return epicTask;
+    }
+
+    private BaseTask addSubTaskToEpic(EpicTask epicTask) {
+        System.out.println("Введите id подзадачи");
+        Integer id = getNumberFromUser();
+        if (id == null) return epicTask;
+
+        BaseTask task = taskManager.getById(id);
+        if (task == null) return epicTask;
+
+        if (task instanceof SubTask subTask) {
+            subTask.setId(epicTask.getId());
+            epicTask.addSubTask(subTask);
+        }
+        return epicTask;
+    }
+
+    private BaseTask updateTitle(BaseTask task) {
+        System.out.println("Введите новое название:");
+        String newTitle = scanner.nextLine();
+        task.setTitle(newTitle);
+        return task;
+    }
+
+    private BaseTask updateDescription(BaseTask task) {
+        System.out.println("Введите новое описание:");
+        String newDescription = scanner.nextLine();
+        task.setDescription(newDescription);
+        return task;
+    }
+
+    private BaseTask updateStatus(BaseTask task) {
+        System.out.println("Выберите новый статус (1-NEW, 2-IN_PROGRESS, 3-DONE):");
+        Integer statusChoice = getNumberFromUser();
+        if (statusChoice == null) return task;
+
+        TaskStatus newStatus = switch (statusChoice) {
+            case 1 -> TaskStatus.NEW;
+            case 2 -> TaskStatus.IN_PROGRESS;
+            case 3 -> TaskStatus.DONE;
+            default -> task.getStatus();
+        };
+
+        task.setStatus(newStatus);
+
+        return task;
     }
 
     private void createNewTask() {
@@ -144,15 +268,15 @@ public class ConsoleTaskManager {
         return new Task(title, description, null, status);
     }
 
-    private Integer getIdFromUser() {
-        int id;
+    private Integer getNumberFromUser() {
+        int number;
         try {
-            id = Integer.parseInt(scanner.nextLine());
+            number = Integer.parseInt(scanner.nextLine());
         } catch (NumberFormatException e) {
             System.out.println("Не число!");
             return null;
         }
-        return id;
+        return number;
     }
 
     private void printAllTasksByType() {
@@ -195,6 +319,20 @@ public class ConsoleTaskManager {
                 1. Обычные задачи
                 2. Подзадачи
                 3. Эпики""");
+    }
+
+    private void printTaskFields(BaseTask task) {
+        System.out.println("""
+                1. Название
+                2. Описание
+                3. Статус""");
+        if (task instanceof EpicTask) {
+            System.out.println("""
+                    4. Добавить подзадачу
+                    5. Удалить подзадачу""");
+        } else if (task instanceof SubTask) {
+            System.out.println("4. Изменить id эпика");
+        }
     }
 
     private void printMenu() {
