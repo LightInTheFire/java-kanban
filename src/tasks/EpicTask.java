@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class EpicTask extends BaseTask {
-    private List<SubTask> subTasks;
+    private final List<SubTask> subTasks;
 
     public EpicTask(String title, String description, Integer id, TaskStatus status) {
         super(title, description, id, status);
@@ -29,7 +29,7 @@ public final class EpicTask extends BaseTask {
     }
 
     public void calculateEpicStatus() {
-        if (subTasks.size() == 0) {
+        if (subTasks.isEmpty()) {
             super.setStatus(TaskStatus.NEW);
             return;
         }
