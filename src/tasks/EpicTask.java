@@ -12,6 +12,8 @@ public final class EpicTask extends BaseTask {
     }
 
     public void addSubTask(SubTask subTask) {
+        if (subTasks.contains(subTask)) return;
+        subTask.setEpicTaskId(this.getId());
         subTasks.add(subTask);
     }
 
@@ -37,13 +39,18 @@ public final class EpicTask extends BaseTask {
             return;
         }
         boolean isAllSubTasksDone = true;
+        boolean isAllSubTasksNew = true;
         for (SubTask subTask : subTasks) {
             if (subTask.getStatus() != TaskStatus.DONE) {
                 isAllSubTasksDone = false;
-                break;
+            }
+            if (subTask.getStatus() != TaskStatus.NEW) {
+                isAllSubTasksNew = false;
             }
         }
-        if (isAllSubTasksDone) {
+        if (isAllSubTasksNew) {
+            super.setStatus(TaskStatus.NEW);
+        } else if (isAllSubTasksDone) {
             super.setStatus(TaskStatus.DONE);
         } else {
             super.setStatus(TaskStatus.IN_PROGRESS);

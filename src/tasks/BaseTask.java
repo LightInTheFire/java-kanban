@@ -59,6 +59,8 @@ public sealed abstract class BaseTask
     public boolean equals(Object o) {
         if (!(o instanceof BaseTask task)) return false;
 
+        if (Objects.equals(id, task.id)) return true;
+
         return Objects.equals(title, task.title)
                 && status == task.status
                 && Objects.equals(description, task.description);
