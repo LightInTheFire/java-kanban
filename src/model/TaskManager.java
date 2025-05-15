@@ -63,20 +63,12 @@ public class TaskManager {
 
     public void updateTask(BaseTask task) {
         switch (task) {
-            case EpicTask epicTask -> {
-                epicTask.calculateEpicStatus();
-                tasks.put(epicTask.getId(), epicTask);
-            }
+            case EpicTask epicTask -> tasks.put(epicTask.getId(), epicTask);
             case SubTask subTask -> {
-                SubTask currentSubTask = (SubTask) tasks.get(subTask.getId());
-                EpicTask epicTaskOfSubtask = (EpicTask) tasks.get(subTask.getEpicTaskId());
-                if (epicTaskOfSubtask == null) {
-                    return;
+                if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTaskOfSubtask)) {
+                    throw new IllegalArgumentException();
                 }
-                epicTaskOfSubtask.removeSubTask(currentSubTask);
                 epicTaskOfSubtask.addSubTask(subTask);
-                epicTaskOfSubtask.calculateEpicStatus();
-
                 tasks.put(subTask.getId(), subTask);
             }
             case Task standardTask -> tasks.put(standardTask.getId(), standardTask);
