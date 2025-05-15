@@ -35,14 +35,12 @@ public class TaskManager {
                 }
             }
             case SubTask subTask -> {
-                Integer epicTaskId = subTask.getEpicTaskId();
-                EpicTask epicTask = (EpicTask) tasks.get(epicTaskId);
-                if (epicTask == null) return;
+                if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTask)) {
+                    throw new IllegalStateException("subtask with no epic in map");
+                }
                 epicTask.removeSubTask(subTask);
-                epicTask.calculateEpicStatus();
             }
-            case Task ignored -> {
-            }
+            case Task ignored -> {}
         }
     }
 
