@@ -8,6 +8,7 @@ import tasks.Task;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class TaskManager {
     private static int idCounter = 0;
@@ -84,12 +85,12 @@ public class TaskManager {
         }
     }
 
-    public List<SubTask> getAllSubtasksOfEpic(int id) {
+    public Optional<List<SubTask>> getAllSubtasksOfEpic(int id) {
         return switch (tasks.get(id)) {
-            case EpicTask epicTask -> epicTask.getSubTasks();
-            case SubTask ignored -> null;
-            case Task ignored -> null;
-            case null -> null;
+            case EpicTask epicTask -> Optional.of(epicTask.getSubTasks());
+            case SubTask ignored -> Optional.empty();
+            case Task ignored -> Optional.empty();
+            case null -> Optional.empty();
         };
     }
 
