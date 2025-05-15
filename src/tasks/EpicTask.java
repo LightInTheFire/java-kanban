@@ -6,24 +6,35 @@ import java.util.List;
 public final class EpicTask extends BaseTask {
     private final List<SubTask> subTasks;
 
-    public EpicTask(String title, String description, Integer id, TaskStatus status) {
-        super(title, description, id, status);
+    public EpicTask(String title, String description, Integer id) {
+        super(title, description, id, TaskStatus.NEW);
         this.subTasks = new ArrayList<>();
+        calculateEpicStatus();
     }
 
     public void addSubTask(SubTask subTask) {
-        if (subTasks.contains(subTask)) return;
-        subTask.setEpicTaskId(this.getId());
+        int i = subTasks.indexOf(subTask);
+        if (i != -1) {
+            subTasks.set(i, subTask);
+            return;
+        }
         subTasks.add(subTask);
+
+        calculateEpicStatus();
     }
 
     public void removeSubTask(SubTask subTask) {
         subTasks.remove(subTask);
+
+        calculateEpicStatus();
     }
 
     public void removeSubTaskById(Integer id) {
         subTasks.removeIf(subTask -> subTask.getId().equals(id));
+
+        calculateEpicStatus();
     }
+
     public List<SubTask> getSubTasks() {
         return subTasks;
     }
@@ -33,11 +44,12 @@ public final class EpicTask extends BaseTask {
         calculateEpicStatus();
     }
 
-    public void calculateEpicStatus() {
+    private void calculateEpicStatus() {
         if (subTasks.isEmpty()) {
             super.setStatus(TaskStatus.NEW);
             return;
         }
+
         boolean isAllSubTasksDone = true;
         boolean isAllSubTasksNew = true;
         for (SubTask subTask : subTasks) {
@@ -48,6 +60,7 @@ public final class EpicTask extends BaseTask {
                 isAllSubTasksNew = false;
             }
         }
+
         if (isAllSubTasksNew) {
             super.setStatus(TaskStatus.NEW);
         } else if (isAllSubTasksDone) {
