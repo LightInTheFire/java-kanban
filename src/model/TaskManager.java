@@ -48,19 +48,19 @@ public class TaskManager {
 
     public void addTask(BaseTask task) {
         switch (task) {
-            case EpicTask epicTask -> epicTask.calculateEpicStatus();
+            case EpicTask ignored -> {}
             case SubTask subTask -> {
-                EpicTask epicTask = (EpicTask) tasks.get(subTask.getEpicTaskId());
+                if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTask)) {
+                    throw new IllegalArgumentException("no epic for subtask");
+                }
                 epicTask.addSubTask(subTask);
-                epicTask.calculateEpicStatus();
             }
-            case Task ignored -> {
-            }
+            case Task ignored -> {}
         }
-        task.setId(idCounter);
-        tasks.put(idCounter, task);
+        int id = getNextId();
 
-        idCounter++;
+        task.setId(id);
+        tasks.put(id, task);
     }
 
     public void updateTask(BaseTask task) {
