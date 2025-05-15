@@ -57,21 +57,15 @@ public sealed abstract class BaseTask
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof BaseTask task)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        if (Objects.equals(id, task.id)) return true;
-
-        return Objects.equals(title, task.title)
-                && status == task.status
-                && Objects.equals(description, task.description);
+        BaseTask task = (BaseTask) o;
+        return Objects.equals(getId(), task.getId());
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(title);
-        result = 31 * result + Objects.hashCode(description);
-        result = 31 * result + Objects.hashCode(status);
-        return result;
+        return Objects.hashCode(getId());
     }
 
     @Override
