@@ -23,6 +23,10 @@ public final class EpicTask extends BaseTask {
         calculateEpicStatus();
     }
 
+    public void clearSubTasks() {
+        subTasks.clear();
+    }
+
     public void removeSubTask(SubTask subTask) {
         subTasks.remove(subTask);
 
