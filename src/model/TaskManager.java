@@ -126,6 +126,10 @@ public class TaskManager {
         removeAllTasksOfCertainType(SubTask.class);
     }
 
+    private int getNextId() {
+        return idCounter++;
+    }
+
     private <T extends BaseTask> void removeAllTasksOfCertainType(Class<T> taskClass) {
         tasks.entrySet()
                 .removeIf(pair -> taskClass.isInstance(pair.getValue()));
