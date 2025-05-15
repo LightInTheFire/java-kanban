@@ -115,6 +115,13 @@ public class TaskManager {
     }
 
     public void removeAllSubTasks() {
+        for (BaseTask value : tasks.values()) {
+            switch (value) {
+                case EpicTask epicTask -> epicTask.clearSubTasks();
+                case SubTask ignored -> {}
+                case Task ignored -> {}
+            }
+        }
         removeAllTasksOfCertainType(SubTask.class);
     }
 
