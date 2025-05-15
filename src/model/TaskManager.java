@@ -108,6 +108,7 @@ public class TaskManager {
 
     public void removeAllEpicsTasks() {
         removeAllTasksOfCertainType(EpicTask.class);
+        removeAllTasksOfCertainType(SubTask.class);
     }
 
     public void removeAllStandardTasks() {
