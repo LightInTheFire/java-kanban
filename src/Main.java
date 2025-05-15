@@ -1,5 +1,5 @@
-import tasks.*;
 import model.TaskManager;
+import tasks.*;
 
 import java.util.Map;
 
@@ -12,10 +12,10 @@ public class Main {
         taskManager.addTask(new Task("Задача 1", "описание ", null, TaskStatus.DONE));
         taskManager.addTask(new Task("Задача 1", "описание ", null, TaskStatus.IN_PROGRESS));
 
-        EpicTask epicTask1 = new EpicTask("Эпик 1", "описание", null, TaskStatus.NEW);
+        EpicTask epicTask1 = new EpicTask("Эпик 1", "описание", null);
         taskManager.addTask(epicTask1);
 
-        EpicTask epicTask2 = new EpicTask("Эпик 2", "описание", null, TaskStatus.DONE);
+        EpicTask epicTask2 = new EpicTask("Эпик 2", "описание", null);
         taskManager.addTask(epicTask2);
         SubTask subTask1 = new SubTask("Подзадача 1", "описание", null, TaskStatus.NEW, 3);
         SubTask subTask2 = new SubTask("Подзадача 2", "описание", null, TaskStatus.NEW, 3);
@@ -30,8 +30,6 @@ public class Main {
         printTasks(taskManager.getTasks());
         System.out.println();
 
-        epicTask1.addSubTask(subTask1);
-        epicTask1.addSubTask(subTask2);
         taskManager.addTask(subTask3);
         printTasks(taskManager.getTasks());
         System.out.println();
