@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.light.Managers;
 import ru.light.TaskManagers.TaskManager;
+import ru.light.tasks.EpicTask;
 import ru.light.tasks.SubTask;
 import ru.light.tasks.Task;
 import ru.light.tasks.TaskStatus;
@@ -53,6 +54,16 @@ class InMemoryTaskManagerTest {
 
         List<Task> standardTasks = taskManager.getAllStandardTasks();
         Assertions.assertEquals(1, standardTasks.size());
+    }
+
+    @Test
+    public void testTaskManagerAddingEpicTasks() {
+        EpicTask epic = new EpicTask("Задача 1", "описание", null);
+        taskManager.addTask(epic);
+
+        List<EpicTask> standardTasks = taskManager.getAllEpicsTasks();
+        Assertions.assertEquals(1, standardTasks.size());
+        Assertions.assertEquals(epic, taskManager.getById(0));
     }
 
     @Test
