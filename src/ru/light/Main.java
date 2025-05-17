@@ -1,7 +1,8 @@
 package ru.light;
 
-import ru.light.taskmanagers.TaskManager;
-import ru.light.tasks.*;
+import ru.light.managers.Managers;
+import ru.light.managers.task.TaskManager;
+import ru.light.task.*;
 
 import java.util.ArrayList;
 

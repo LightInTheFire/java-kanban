@@ -1,12 +1,12 @@
-package ru.light.historymanagers;
+package ru.light.managers.history;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.light.Managers;
-import ru.light.tasks.BaseTask;
-import ru.light.tasks.Task;
-import ru.light.tasks.TaskStatus;
+import ru.light.managers.Managers;
+import ru.light.task.BaseTask;
+import ru.light.task.Task;
+import ru.light.task.TaskStatus;
 
 import java.util.List;
 

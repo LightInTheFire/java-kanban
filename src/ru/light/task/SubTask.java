@@ -1,4 +1,4 @@
-package ru.light.tasks;
+package ru.light.task;
 
 public final class SubTask extends BaseTask {
     Integer epicTaskId;

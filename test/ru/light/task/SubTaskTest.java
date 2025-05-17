@@ -1,4 +1,4 @@
-package ru.light.tasks;
+package ru.light.task;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,9 @@
-package ru.light.taskmanagers;
+package ru.light.managers.task;
 
-import ru.light.tasks.BaseTask;
-import ru.light.tasks.EpicTask;
-import ru.light.tasks.SubTask;
-import ru.light.tasks.Task;
+import ru.light.task.BaseTask;
+import ru.light.task.EpicTask;
+import ru.light.task.SubTask;
+import ru.light.task.Task;
 
 import java.util.List;
 import java.util.Optional;

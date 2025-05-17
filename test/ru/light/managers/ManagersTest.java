@@ -1,4 +1,4 @@
-package ru.light;
+package ru.light.managers;
 
 import org.junit.jupiter.api.Test;
 
