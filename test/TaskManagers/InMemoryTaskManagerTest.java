@@ -62,4 +62,14 @@ class InMemoryTaskManagerTest {
 
         Assertions.assertEquals(0, task.getId());
     }
+
+    @Test
+    public void testGetTaskWithId() {
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW);
+        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW);
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+
+        Assertions.assertEquals(task2, taskManager.getById(1));
+    }
 }
