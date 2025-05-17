@@ -1,70 +1,72 @@
-import HistoryManagers.InMemoryHistoryManager;
-import TaskManagers.InMemoryTaskManager;
+import TaskManagers.TaskManager;
 import tasks.*;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager(new InMemoryHistoryManager());
+        TaskManager taskManager = Managers.getDefault();
 
-        taskManager.addTask(new Task("Задача 1", "описание ", null, TaskStatus.NEW));
-        taskManager.addTask(new Task("Задача 1", "описание ", null, TaskStatus.DONE));
-        taskManager.addTask(new Task("Задача 1", "описание ", null, TaskStatus.IN_PROGRESS));
+        Task task1 = new Task("Задача 1", "описание ", null, TaskStatus.NEW);
+        Task task2 = new Task("Задача 2", "описание ", null, TaskStatus.IN_PROGRESS);
 
-        EpicTask epicTask1 = new EpicTask("Эпик 1", "описание", null);
-        taskManager.addTask(epicTask1);
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
 
-        EpicTask epicTask2 = new EpicTask("Эпик 2", "описание", null);
-        taskManager.addTask(epicTask2);
-        SubTask subTask1 = new SubTask("Подзадача 1", "описание", null, TaskStatus.NEW, 3);
-        SubTask subTask2 = new SubTask("Подзадача 2", "описание", null, TaskStatus.NEW, 3);
+        printAllTasks(taskManager);
+        taskManager.getById(1);
+        taskManager.updateTask(new Task("Задача 1", "новое описание", 0, TaskStatus.DONE));
+        taskManager.removeById(1);
+        printAllTasks(taskManager);
+
+        EpicTask epic1 = new EpicTask("Эпик 1", "описание", null);
+        EpicTask epic2 = new EpicTask("Эпик 2", "описание", null);
+        taskManager.addTask(epic1);
+        taskManager.addTask(epic2);
+        printAllTasks(taskManager);
+
+        SubTask subTask1 = new SubTask("Подзадача 1", "описание", null, TaskStatus.NEW, 2);
+        SubTask subTask2 = new SubTask("Подзадача 2", "описание", null, TaskStatus.NEW, 2);
         SubTask subTask3 = new SubTask("Подзадача 3", "описание", null, TaskStatus.NEW, 3);
-        SubTask subTask4 = new SubTask("Подзадача 4", "описание", null, TaskStatus.IN_PROGRESS, epicTask2.getId());
-        SubTask subTask5 = new SubTask("Подзадача 5", "описание", null, TaskStatus.DONE, epicTask2.getId());
-        taskManager.addTask(subTask4);
-        taskManager.addTask(subTask5);
-
+        taskManager.getById(10);
+        taskManager.getById(2);
         taskManager.addTask(subTask1);
         taskManager.addTask(subTask2);
-        printTasks(taskManager.getTasks());
-        System.out.println();
-
         taskManager.addTask(subTask3);
-        printTasks(taskManager.getTasks());
-        System.out.println();
+        printAllTasks(taskManager);
 
-        SubTask subTask3Upd = new SubTask("Подзадача 3", "описание", subTask3.getId(), TaskStatus.DONE, epicTask1.getId());
-        taskManager.updateTask(subTask3Upd);
+        SubTask updatedSubTask3 = new SubTask("Подзадача 3", "описание", subTask3.getId(), TaskStatus.DONE, 3);
+        taskManager.updateTask(updatedSubTask3);
+        printAllTasks(taskManager);
 
-        printTasks(taskManager.getTasks());
-        System.out.println();
-
-        taskManager.removeById(7);
-        taskManager.removeById(8);
-        printTasks(taskManager.getTasks());
-        System.out.println();
-
-        taskManager.removeById(4);
-
-        printTasks(taskManager.getTasks());
-        System.out.println();
+        taskManager.removeById(2);
+        printAllTasks(taskManager);
     }
 
-    private static void printTasks(Map<Integer, BaseTask> tasks) {
-        for (Map.Entry<Integer, BaseTask> taskEntry : tasks.entrySet()) {
-            switch (taskEntry.getValue()) {
-                case EpicTask epicTask -> {
-                    System.out.println(epicTask.getSubTasks());
-                    System.out.printf("%d: %s%n", taskEntry.getKey(), epicTask);
-                }
-                case SubTask subTask -> System.out.printf("%d: %s + epicId %d%n",
-                        taskEntry.getKey(), subTask, subTask.getEpicTaskId());
-                case Task task -> System.out.printf("%d: %s%n",
-                        taskEntry.getKey(), taskEntry.getValue());
-            }
+    private static void printAllTasks(TaskManager manager) {
 
+        System.out.println("\nЗадачи:");
+        for (Task task : manager.getAllStandardTasks()) {
+            System.out.println(task);
+        }
+
+        System.out.println("Эпики:");
+        for (EpicTask epic : manager.getAllEpicsTasks()) {
+            System.out.println(epic);
+
+            for (SubTask task : manager.getAllSubtasksOfEpic(epic.getId()).orElse(new ArrayList<>())) {
+                System.out.println("--> " + task);
+            }
+        }
+        System.out.println("Подзадачи:");
+        for (SubTask subtask : manager.getAllSubTasks()) {
+            System.out.println(subtask);
+        }
+
+        System.out.println("История:");
+        for (BaseTask task : manager.getHistory()) {
+            System.out.println(task);
         }
     }
 }
