@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface TaskManager {
+    List<BaseTask> getHistory();
+
     BaseTask getById(int id);
 
     void removeById(int id);
