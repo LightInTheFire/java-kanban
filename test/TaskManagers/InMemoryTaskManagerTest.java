@@ -9,6 +9,8 @@ import ru.light.tasks.SubTask;
 import ru.light.tasks.Task;
 import ru.light.tasks.TaskStatus;
 
+import java.util.List;
+
 class InMemoryTaskManagerTest {
     private static TaskManager taskManager;
 
@@ -42,5 +44,22 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals("Задача 1", task.getTitle());
         Assertions.assertEquals("описание", task.getDescription());
         Assertions.assertNotNull(task.getId());
+    }
+
+    @Test
+    public void testTaskManagerAddingTasks() {
+        Task task = new Task("Задача 1", "описание", null, TaskStatus.NEW);
+        taskManager.addTask(task);
+
+        List<Task> standardTasks = taskManager.getAllStandardTasks();
+        Assertions.assertEquals(1, standardTasks.size());
+    }
+
+    @Test
+    public void testAddingTaskWithId() {
+        Task task = new Task("Задача 1", "описание", 123, TaskStatus.NEW);
+        taskManager.addTask(task);
+
+        Assertions.assertEquals(0, task.getId());
     }
 }
