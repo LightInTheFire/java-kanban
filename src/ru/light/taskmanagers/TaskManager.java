@@ -1,4 +1,4 @@
-package ru.light.TaskManagers;
+package ru.light.taskmanagers;
 
 import ru.light.tasks.BaseTask;
 import ru.light.tasks.EpicTask;

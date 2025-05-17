@@ -1,4 +1,4 @@
-package ru.light.HistoryManagers;
+package ru.light.historymanagers;
 
 import ru.light.tasks.BaseTask;
 

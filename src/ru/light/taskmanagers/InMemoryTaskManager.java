@@ -1,6 +1,6 @@
-package ru.light.TaskManagers;
+package ru.light.taskmanagers;
 
-import ru.light.HistoryManagers.HistoryManager;
+import ru.light.historymanagers.HistoryManager;
 import ru.light.tasks.BaseTask;
 import ru.light.tasks.EpicTask;
 import ru.light.tasks.SubTask;

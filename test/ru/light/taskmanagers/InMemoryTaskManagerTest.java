@@ -1,10 +1,9 @@
-package TaskManagers;
+package ru.light.taskmanagers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.light.Managers;
-import ru.light.TaskManagers.TaskManager;
 import ru.light.tasks.EpicTask;
 import ru.light.tasks.SubTask;
 import ru.light.tasks.Task;

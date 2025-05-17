@@ -1,4 +1,4 @@
-package ru.light.HistoryManagers;
+package ru.light.historymanagers;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
