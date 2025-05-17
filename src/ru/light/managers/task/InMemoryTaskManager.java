@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class InMemoryTaskManager implements TaskManager {
-    private static int idCounter = 0;
+    private int idCounter = 0;
     private final Map<Integer, BaseTask> tasks;
     HistoryManager historyManager;
 
