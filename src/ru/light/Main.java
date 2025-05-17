@@ -1,5 +1,7 @@
-import TaskManagers.TaskManager;
-import tasks.*;
+package ru.light;
+
+import ru.light.TaskManagers.TaskManager;
+import ru.light.tasks.*;
 
 import java.util.ArrayList;
 

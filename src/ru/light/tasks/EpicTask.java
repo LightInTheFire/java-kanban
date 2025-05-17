@@ -1,4 +1,4 @@
-package tasks;
+package ru.light.tasks;
 
 import java.util.ArrayList;
 import java.util.List;

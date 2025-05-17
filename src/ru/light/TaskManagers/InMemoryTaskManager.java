@@ -1,10 +1,10 @@
-package TaskManagers;
+package ru.light.TaskManagers;
 
-import HistoryManagers.HistoryManager;
-import tasks.BaseTask;
-import tasks.EpicTask;
-import tasks.SubTask;
-import tasks.Task;
+import ru.light.HistoryManagers.HistoryManager;
+import ru.light.tasks.BaseTask;
+import ru.light.tasks.EpicTask;
+import ru.light.tasks.SubTask;
+import ru.light.tasks.Task;
 
 import java.util.HashMap;
 import java.util.List;
@@ -144,8 +144,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private <T extends BaseTask> List<T> getTasksOfCertainType(Class<T> taskClass) {
-        Map<Integer, T> map = new HashMap<>();
-
         return tasks.values().stream()
                 .filter(taskClass::isInstance)
                 .map(e -> (T) e)

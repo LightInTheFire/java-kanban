@@ -2,13 +2,13 @@ package TasksTest;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import tasks.Task;
-import tasks.TaskStatus;
+import ru.light.tasks.Task;
+import ru.light.tasks.TaskStatus;
 
 public class StandardTaskTest {
 
     @Test
-    public void StandardTasksEqualsWhenIdEquals() {
+    public void testStandardTasksEqualsWhenIdEquals() {
         Task task1 = new Task("Задача 1", "описание ", 1, TaskStatus.NEW);
         Task task2 = new Task("Задача 2", "описание 2123", 1, TaskStatus.DONE);
 
@@ -16,7 +16,7 @@ public class StandardTaskTest {
     }
 
     @Test
-    public void StandardTasksNotEqualsWhenIdNotEqual() {
+    public void testStandardTasksNotEqualsWhenIdNotEqual() {
         Task task1 = new Task("Задача 1", "описание ", 1, TaskStatus.NEW);
         Task task2 = new Task("Задача 1", "описание ", 2, TaskStatus.NEW);
 

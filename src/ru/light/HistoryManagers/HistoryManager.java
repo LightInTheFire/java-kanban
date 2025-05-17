@@ -1,6 +1,6 @@
-package HistoryManagers;
+package ru.light.HistoryManagers;
 
-import tasks.BaseTask;
+import ru.light.tasks.BaseTask;
 
 import java.util.List;
 

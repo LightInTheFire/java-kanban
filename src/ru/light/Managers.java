@@ -1,7 +1,9 @@
-import HistoryManagers.HistoryManager;
-import HistoryManagers.InMemoryHistoryManager;
-import TaskManagers.InMemoryTaskManager;
-import TaskManagers.TaskManager;
+package ru.light;
+
+import ru.light.HistoryManagers.HistoryManager;
+import ru.light.HistoryManagers.InMemoryHistoryManager;
+import ru.light.TaskManagers.InMemoryTaskManager;
+import ru.light.TaskManagers.TaskManager;
 
 public class Managers {
 

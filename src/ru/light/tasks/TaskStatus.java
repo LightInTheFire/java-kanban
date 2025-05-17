@@ -1,4 +1,4 @@
-package tasks;
+package ru.light.tasks;
 
 public enum TaskStatus {
     NEW,
