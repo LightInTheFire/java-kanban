@@ -6,7 +6,7 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        InMemoryTaskManager taskManager = new InMemoryTaskManager(new InMemoryHistoryManager());
 
         taskManager.addTask(new Task("Задача 1", "описание ", null, TaskStatus.NEW));
         taskManager.addTask(new Task("Задача 1", "описание ", null, TaskStatus.DONE));
