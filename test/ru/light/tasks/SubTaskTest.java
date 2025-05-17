@@ -1,9 +1,7 @@
-package ru.light.tasksTest;
+package ru.light.tasks;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.light.tasks.SubTask;
-import ru.light.tasks.TaskStatus;
 
 public class SubTaskTest {
 

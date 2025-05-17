@@ -1,8 +1,7 @@
-package ru.light.tasksTest;
+package ru.light.tasks;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.light.tasks.EpicTask;
 
 public class EpicTaskTest {
 
