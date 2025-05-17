@@ -16,6 +16,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(BaseTask task) {
+        if (task == null) {
+            return;
+        }
         if (history.size() <= MAX_CAPACITY) {
             history.addLast(task);
             return;
