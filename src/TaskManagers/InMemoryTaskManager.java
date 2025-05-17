@@ -21,10 +21,6 @@ public class InMemoryTaskManager implements TaskManager {
         this.historyManager = historyManager;
     }
 
-    public Map<Integer, BaseTask> getTasks() {
-        return tasks;
-    }
-
     @Override
     public List<BaseTask> getHistory() {
         return historyManager.getHistory();
@@ -34,7 +30,7 @@ public class InMemoryTaskManager implements TaskManager {
     public BaseTask getById(int id) {
         BaseTask task = tasks.get(id);
         historyManager.add(task);
-        
+
         return task;
     }
 
@@ -101,17 +97,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Map<Integer, EpicTask> getAllEpicsTasks() {
+    public List<EpicTask> getAllEpicsTasks() {
         return getTasksOfCertainType(EpicTask.class);
     }
 
     @Override
-    public Map<Integer, Task> getAllStandartTasks() {
+    public List<Task> getAllStandardTasks() {
         return getTasksOfCertainType(Task.class);
     }
 
     @Override
-    public Map<Integer, SubTask> getAllSubTasks() {
+    public List<SubTask> getAllSubTasks() {
         return getTasksOfCertainType(SubTask.class);
     }
 
@@ -147,16 +143,13 @@ public class InMemoryTaskManager implements TaskManager {
                 .removeIf(pair -> taskClass.isInstance(pair.getValue()));
     }
 
-    private <T extends BaseTask> Map<Integer, T> getTasksOfCertainType(Class<T> taskClass) {
+    private <T extends BaseTask> List<T> getTasksOfCertainType(Class<T> taskClass) {
         Map<Integer, T> map = new HashMap<>();
 
-        for (BaseTask task : tasks.values()) {
-            if (taskClass.isInstance(task)) {
-                map.put(task.getId(), (T) task);
-            }
-        }
-
-        return map;
+        return tasks.values().stream()
+                .filter(taskClass::isInstance)
+                .map(e -> (T) e)
+                .toList();
     }
 
 }
