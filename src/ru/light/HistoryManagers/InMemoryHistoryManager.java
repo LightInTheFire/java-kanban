@@ -19,7 +19,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
-        if (history.size() <= MAX_CAPACITY) {
+        if (history.size() < MAX_CAPACITY) {
             history.addLast(task);
             return;
         }
