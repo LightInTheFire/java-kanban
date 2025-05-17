@@ -1,4 +1,4 @@
-package model;
+package TaskManagers;
 
 import tasks.BaseTask;
 import tasks.EpicTask;
@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class TaskManager {
+public class InMemoryTaskManager implements TaskManager {
     private static int idCounter = 0;
     private final Map<Integer, BaseTask> tasks;
 
-    public TaskManager() {
+    public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
     }
 
@@ -22,10 +22,12 @@ public class TaskManager {
         return tasks;
     }
 
+    @Override
     public BaseTask getById(int id) {
         return tasks.get(id);
     }
 
+    @Override
     public void removeById(int id) {
         BaseTask removedTask = tasks.remove(id);
         switch (removedTask) {
@@ -44,6 +46,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public void addTask(BaseTask task) {
         switch (task) {
             case EpicTask ignored -> {}
@@ -61,6 +64,7 @@ public class TaskManager {
         tasks.put(id, task);
     }
 
+    @Override
     public void updateTask(BaseTask task) {
         switch (task) {
             case EpicTask epicTask -> tasks.put(epicTask.getId(), epicTask);
@@ -75,6 +79,7 @@ public class TaskManager {
         }
     }
 
+    @Override
     public Optional<List<SubTask>> getAllSubtasksOfEpic(int id) {
         return switch (tasks.get(id)) {
             case EpicTask epicTask -> Optional.of(epicTask.getSubTasks());
@@ -84,27 +89,33 @@ public class TaskManager {
         };
     }
 
+    @Override
     public Map<Integer, EpicTask> getAllEpicsTasks() {
         return getTasksOfCertainType(EpicTask.class);
     }
 
+    @Override
     public Map<Integer, Task> getAllStandartTasks() {
         return getTasksOfCertainType(Task.class);
     }
 
+    @Override
     public Map<Integer, SubTask> getAllSubTasks() {
         return getTasksOfCertainType(SubTask.class);
     }
 
+    @Override
     public void removeAllEpicsTasks() {
         removeAllTasksOfCertainType(EpicTask.class);
         removeAllTasksOfCertainType(SubTask.class);
     }
 
+    @Override
     public void removeAllStandardTasks() {
         removeAllTasksOfCertainType(Task.class);
     }
 
+    @Override
     public void removeAllSubTasks() {
         for (BaseTask value : tasks.values()) {
             switch (value) {

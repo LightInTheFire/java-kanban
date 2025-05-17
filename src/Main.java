@@ -1,4 +1,4 @@
-import model.TaskManager;
+import TaskManagers.InMemoryTaskManager;
 import tasks.*;
 
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        InMemoryTaskManager taskManager = new InMemoryTaskManager();
 
         taskManager.addTask(new Task("Задача 1", "описание ", null, TaskStatus.NEW));
         taskManager.addTask(new Task("Задача 1", "описание ", null, TaskStatus.DONE));
