@@ -16,15 +16,17 @@ public final class EpicTask extends BaseTask {
         int i = subTasks.indexOf(subTask);
         if (i != -1) {
             subTasks.set(i, subTask);
-            return;
+        } else {
+            subTasks.add(subTask);
         }
-        subTasks.add(subTask);
+
 
         calculateEpicStatus();
     }
 
     public void clearSubTasks() {
         subTasks.clear();
+        calculateEpicStatus();
     }
 
     public void removeSubTask(SubTask subTask) {
