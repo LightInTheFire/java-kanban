@@ -1,5 +1,6 @@
 package TaskManagers;
 
+import HistoryManagers.HistoryManager;
 import tasks.BaseTask;
 import tasks.EpicTask;
 import tasks.SubTask;
@@ -13,13 +14,20 @@ import java.util.Optional;
 public class InMemoryTaskManager implements TaskManager {
     private static int idCounter = 0;
     private final Map<Integer, BaseTask> tasks;
+    HistoryManager historyManager;
 
-    public InMemoryTaskManager() {
+    public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
+        this.historyManager = historyManager;
     }
 
     public Map<Integer, BaseTask> getTasks() {
         return tasks;
+    }
+
+    @Override
+    public List<BaseTask> getHistory() {
+        return historyManager.getHistory();
     }
 
     @Override
