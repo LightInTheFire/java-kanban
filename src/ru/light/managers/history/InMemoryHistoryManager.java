@@ -19,13 +19,14 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
+        BaseTask copy = task.clone();
         if (history.size() < MAX_CAPACITY) {
-            history.addLast(task);
+            history.addLast(copy);
             return;
         }
 
         history.removeFirst();
-        history.addLast(task);
+        history.addLast(copy);
     }
 
     @Override
