@@ -42,7 +42,7 @@ public final class EpicTask extends BaseTask {
     }
 
     public List<SubTask> getSubTasks() {
-        return subTasks;
+        return List.copyOf(subTasks);
     }
 
     @Override
