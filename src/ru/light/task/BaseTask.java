@@ -81,7 +81,6 @@ public sealed abstract class BaseTask implements Cloneable
     public BaseTask clone() {
         try {
             BaseTask clone = (BaseTask) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
