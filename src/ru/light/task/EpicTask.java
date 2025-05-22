@@ -20,7 +20,6 @@ public final class EpicTask extends BaseTask {
             subTasks.add(subTask);
         }
 
-
         calculateEpicStatus();
     }
 
