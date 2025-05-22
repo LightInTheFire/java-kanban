@@ -2,7 +2,7 @@ package ru.light.task;
 
 import java.util.Objects;
 
-public sealed abstract class BaseTask
+public sealed abstract class BaseTask implements Cloneable
         permits Task, SubTask, EpicTask {
     private String title;
     private String description;
@@ -75,5 +75,16 @@ public sealed abstract class BaseTask
                 "description=" + description + ", " +
                 "id=" + id + ", " +
                 "status=" + status + ']';
+    }
+
+    @Override
+    public BaseTask clone() {
+        try {
+            BaseTask clone = (BaseTask) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
