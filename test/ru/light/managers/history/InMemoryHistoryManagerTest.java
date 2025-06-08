@@ -38,7 +38,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void testHistoryShouldContainOnlyUniqueTasks() {
+    void historyContainOnlyUniqueTasks() {
         Task task1 = new Task("Задача 1", "описание", 12, TaskStatus.DONE);
         Task task2 = new Task("Задача 2", "описание", 14, TaskStatus.DONE);
         Task updatedTask1 = new Task("Задача 1", "новое описание", 12, TaskStatus.IN_PROGRESS);
