@@ -21,7 +21,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testCantAddSubTaskWithEpicIdAsSubtaskId() {
-        SubTask subTask = new SubTask("Подзадача 1", "описание", null, TaskStatus.NEW, 0);
+        SubTask subTask = new SubTask("Подзадача 1", "описание",
+                null, TaskStatus.NEW, 0);
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 taskManager.addTask(subTask)
@@ -30,7 +31,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testCantAddSubTaskWithEpicIdEqualsNull() {
-        SubTask subTask = new SubTask("Подзадача 1", "описание", null, TaskStatus.NEW, null);
+        SubTask subTask = new SubTask("Подзадача 1", "описание",
+                null, TaskStatus.NEW, null);
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 taskManager.addTask(subTask)
         );
