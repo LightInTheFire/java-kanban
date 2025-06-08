@@ -2,7 +2,7 @@ package ru.light.task;
 
 import java.util.Objects;
 
-public sealed abstract class BaseTask implements Cloneable
+public abstract sealed class BaseTask implements Cloneable
         permits Task, SubTask, EpicTask {
     private String title;
     private String description;

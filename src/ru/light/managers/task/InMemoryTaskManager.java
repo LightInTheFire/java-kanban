@@ -53,7 +53,8 @@ public class InMemoryTaskManager implements TaskManager {
                 }
                 epicTask.removeSubTask(subTask);
             }
-            case Task ignored -> {}
+            case Task ignored -> {
+            }
         }
 
         historyManager.remove(removedTask.getId());
@@ -62,14 +63,16 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addTask(BaseTask task) {
         switch (task) {
-            case EpicTask ignored -> {}
+            case EpicTask ignored -> {
+            }
             case SubTask subTask -> {
                 if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTask)) {
                     throw new IllegalArgumentException("no epic for subtask");
                 }
                 epicTask.addSubTask(subTask);
             }
-            case Task ignored -> {}
+            case Task ignored -> {
+            }
         }
         int id = getNextId();
 
@@ -133,8 +136,10 @@ public class InMemoryTaskManager implements TaskManager {
         for (BaseTask value : tasks.values()) {
             switch (value) {
                 case EpicTask epicTask -> epicTask.clearSubTasks();
-                case SubTask ignored -> {}
-                case Task ignored -> {}
+                case SubTask ignored -> {
+                }
+                case Task ignored -> {
+                }
             }
         }
         removeAllTasksOfCertainType(SubTask.class);
