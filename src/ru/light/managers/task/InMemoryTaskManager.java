@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int idCounter = 0;
     private final Map<Integer, BaseTask> tasks;
     HistoryManager historyManager;
+    private int idCounter = 0;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
@@ -37,6 +37,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeById(int id) {
         BaseTask removedTask = tasks.remove(id);
+        if (removedTask == null) {
+            throw new IllegalArgumentException("Task with id " + id + " does not exist");
+        }
+
         switch (removedTask) {
             case EpicTask epicTask -> {
                 for (SubTask subTask : epicTask.getSubTasks()) {
@@ -51,6 +55,8 @@ public class InMemoryTaskManager implements TaskManager {
             }
             case Task ignored -> {}
         }
+
+        historyManager.remove(removedTask.getId());
     }
 
     @Override
@@ -139,8 +145,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private <T extends BaseTask> void removeAllTasksOfCertainType(Class<T> taskClass) {
-        tasks.entrySet()
-                .removeIf(pair -> taskClass.isInstance(pair.getValue()));
+        List<Map.Entry<Integer, BaseTask>> list = tasks.entrySet()
+                .stream()
+                .filter(pair -> taskClass.isInstance(pair.getValue()))
+                .toList();
+        for (var entry : list) {
+            tasks.remove(entry.getKey());
+            historyManager.remove(entry.getKey());
+        }
     }
 
     private <T extends BaseTask> List<T> getTasksOfCertainType(Class<T> taskClass) {
