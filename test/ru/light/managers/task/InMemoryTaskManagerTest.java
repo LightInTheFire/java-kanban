@@ -83,7 +83,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    public void testShouldNotRemoveTasksWithIncorrectIdPassed() {
+    public void getThrowsWithIncorrectIdPassed() {
         Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW);
         taskManager.addTask(task1);
 
