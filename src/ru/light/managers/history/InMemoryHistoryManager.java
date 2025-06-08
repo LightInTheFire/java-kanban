@@ -14,6 +14,18 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node<BaseTask> head;
     private Node<BaseTask> tail;
 
+    private static class Node<T> {
+        public Node<T> previous;
+        public T value;
+        public Node<T> next;
+
+        public Node(Node<T> previous, T value, Node<T> next) {
+            this.previous = previous;
+            this.value = value;
+            this.next = next;
+        }
+    }
+
     public InMemoryHistoryManager() {
         this.history = new HashMap<>();
         head = null;
@@ -87,17 +99,5 @@ public class InMemoryHistoryManager implements HistoryManager {
             next.previous = null;
         }
 
-    }
-}
-
-class Node<T> {
-    public Node<T> previous;
-    public T value;
-    public Node<T> next;
-
-    public Node(Node<T> previous, T value, Node<T> next) {
-        this.previous = previous;
-        this.value = value;
-        this.next = next;
     }
 }
