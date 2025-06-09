@@ -3,15 +3,33 @@ package ru.light.managers.history;
 import ru.light.task.BaseTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private static final int MAX_CAPACITY = 10;
 
-    private final List<BaseTask> history;
+    private final Map<Integer, Node<BaseTask>> history;
+    private Node<BaseTask> head;
+    private Node<BaseTask> tail;
+
+    private static class Node<T> {
+        public Node<T> previous;
+        public T value;
+        public Node<T> next;
+
+        public Node(Node<T> previous, T value, Node<T> next) {
+            this.previous = previous;
+            this.value = value;
+            this.next = next;
+        }
+    }
 
     public InMemoryHistoryManager() {
-        this.history = new ArrayList<>();
+        this.history = new HashMap<>();
+        head = null;
+        tail = null;
     }
 
     @Override
@@ -19,18 +37,67 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (task == null) {
             return;
         }
-        BaseTask copy = task.clone();
-        if (history.size() < MAX_CAPACITY) {
-            history.addLast(copy);
-            return;
-        }
+        remove(task.getId());
+        linkLast(task);
+    }
 
-        history.removeFirst();
-        history.addLast(copy);
+    @Override
+    public void remove(int id) {
+        removeNode(history.get(id));
     }
 
     @Override
     public List<BaseTask> getHistory() {
-        return history;
+        return getTasks();
+    }
+
+    private List<BaseTask> getTasks() {
+        List<BaseTask> tasks = new ArrayList<>();
+        Node<BaseTask> currentNode = head;
+
+        while (currentNode != null) {
+            tasks.add(currentNode.value);
+            currentNode = currentNode.next;
+        }
+
+        return tasks;
+    }
+
+    private void linkLast(BaseTask task) {
+        final Node<BaseTask> oldTail = tail;
+        final Node<BaseTask> newTail = new Node<>(tail, task, null);
+        tail = newTail;
+        history.put(task.getId(), newTail);
+
+        if (oldTail == null) {
+            head = newTail;
+        } else {
+            oldTail.next = newTail;
+        }
+    }
+
+    private void removeNode(Node<BaseTask> node) {
+        if (node == null) {
+            return;
+        }
+
+        Node<BaseTask> previous = node.previous;
+        Node<BaseTask> next = node.next;
+        node.value = null;
+
+        if (head == node && tail == node) {
+            head = null;
+            tail = null;
+        } else if (head == node) {
+            head = next;
+            head.previous = null;
+        } else if (tail == node) {
+            tail = previous;
+            tail.next = null;
+        } else {
+            previous.next = next;
+            next.previous = null;
+        }
+
     }
 }

@@ -4,10 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.light.managers.Managers;
-import ru.light.task.EpicTask;
-import ru.light.task.SubTask;
-import ru.light.task.Task;
-import ru.light.task.TaskStatus;
+import ru.light.task.*;
 
 import java.util.List;
 
@@ -21,7 +18,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testCantAddSubTaskWithEpicIdAsSubtaskId() {
-        SubTask subTask = new SubTask("Подзадача 1", "описание", null, TaskStatus.NEW, 0);
+        SubTask subTask = new SubTask("Подзадача 1", "описание",
+                null, TaskStatus.NEW, 0);
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 taskManager.addTask(subTask)
@@ -30,7 +28,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testCantAddSubTaskWithEpicIdEqualsNull() {
-        SubTask subTask = new SubTask("Подзадача 1", "описание", null, TaskStatus.NEW, null);
+        SubTask subTask = new SubTask("Подзадача 1", "описание",
+                null, TaskStatus.NEW, null);
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 taskManager.addTask(subTask)
         );
@@ -81,5 +80,40 @@ class InMemoryTaskManagerTest {
         taskManager.addTask(task2);
 
         Assertions.assertEquals(task2, taskManager.getById(1));
+    }
+
+    @Test
+    public void getThrowsWithIncorrectIdPassed() {
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW);
+        taskManager.addTask(task1);
+
+        Assertions.assertThrows(IllegalArgumentException.class, ()
+                -> taskManager.removeById(123));
+        Assertions.assertEquals(1, taskManager.getAllStandardTasks().size());
+    }
+
+    @Test
+    public void testShouldAddTasksToHistory() {
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW);
+        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW);
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+        taskManager.getById(task1.getId());
+        taskManager.getById(task2.getId());
+        List<BaseTask> history = taskManager.getHistory();
+
+        Assertions.assertEquals(2, history.size());
+    }
+    @Test
+    public void testShouldRemoveTasksFromHistory() {
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW);
+        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW);
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+        taskManager.getById(task1.getId());
+        taskManager.getById(task2.getId());
+        taskManager.removeById(task2.getId());
+        List<BaseTask> history = taskManager.getHistory();
+        Assertions.assertEquals(1, history.size());
     }
 }

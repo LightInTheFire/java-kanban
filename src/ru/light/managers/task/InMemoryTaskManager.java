@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class InMemoryTaskManager implements TaskManager {
-    private int idCounter = 0;
     private final Map<Integer, BaseTask> tasks;
     HistoryManager historyManager;
+    private int idCounter = 0;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
@@ -37,6 +37,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeById(int id) {
         BaseTask removedTask = tasks.remove(id);
+        if (removedTask == null) {
+            throw new IllegalArgumentException("Task with id " + id + " does not exist");
+        }
+
         switch (removedTask) {
             case EpicTask epicTask -> {
                 for (SubTask subTask : epicTask.getSubTasks()) {
@@ -49,21 +53,26 @@ public class InMemoryTaskManager implements TaskManager {
                 }
                 epicTask.removeSubTask(subTask);
             }
-            case Task ignored -> {}
+            case Task ignored -> {
+            }
         }
+
+        historyManager.remove(removedTask.getId());
     }
 
     @Override
     public void addTask(BaseTask task) {
         switch (task) {
-            case EpicTask ignored -> {}
+            case EpicTask ignored -> {
+            }
             case SubTask subTask -> {
                 if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTask)) {
                     throw new IllegalArgumentException("no epic for subtask");
                 }
                 epicTask.addSubTask(subTask);
             }
-            case Task ignored -> {}
+            case Task ignored -> {
+            }
         }
         int id = getNextId();
 
@@ -127,8 +136,10 @@ public class InMemoryTaskManager implements TaskManager {
         for (BaseTask value : tasks.values()) {
             switch (value) {
                 case EpicTask epicTask -> epicTask.clearSubTasks();
-                case SubTask ignored -> {}
-                case Task ignored -> {}
+                case SubTask ignored -> {
+                }
+                case Task ignored -> {
+                }
             }
         }
         removeAllTasksOfCertainType(SubTask.class);
@@ -139,8 +150,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private <T extends BaseTask> void removeAllTasksOfCertainType(Class<T> taskClass) {
-        tasks.entrySet()
-                .removeIf(pair -> taskClass.isInstance(pair.getValue()));
+        List<Map.Entry<Integer, BaseTask>> list = tasks.entrySet()
+                .stream()
+                .filter(pair -> taskClass.isInstance(pair.getValue()))
+                .toList();
+        for (var entry : list) {
+            tasks.remove(entry.getKey());
+            historyManager.remove(entry.getKey());
+        }
     }
 
     private <T extends BaseTask> List<T> getTasksOfCertainType(Class<T> taskClass) {

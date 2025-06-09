@@ -38,34 +38,30 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void testHistoryManagerUpdatesTasksWhenOverfilled() {
-        Task task1 = new Task("Задача 1", "описание", 1, TaskStatus.DONE);
-        Task task2 = new Task("Задача 2", "описание", 2, TaskStatus.DONE);
-        Task task3 = new Task("Задача 3", "описание", 3, TaskStatus.DONE);
-        Task task4 = new Task("Задача 4", "описание", 4, TaskStatus.DONE);
-        Task task5 = new Task("Задача 5", "описание", 5, TaskStatus.DONE);
-        Task task6 = new Task("Задача 6", "описание", 6, TaskStatus.DONE);
-        Task task7 = new Task("Задача 7", "описание", 7, TaskStatus.DONE);
-        Task task8 = new Task("Задача 8", "описание", 8, TaskStatus.DONE);
-        Task task9 = new Task("Задача 9", "описание", 9, TaskStatus.DONE);
-        Task task10 = new Task("Задача 10", "описание", 10, TaskStatus.DONE);
-        Task task11 = new Task("Задача 11", "описание", 11, TaskStatus.DONE);
-
+    void historyContainOnlyUniqueTasks() {
+        Task task1 = new Task("Задача 1", "описание", 12, TaskStatus.DONE);
+        Task task2 = new Task("Задача 2", "описание", 14, TaskStatus.DONE);
+        Task updatedTask1 = new Task("Задача 1", "новое описание", 12, TaskStatus.IN_PROGRESS);
         historyManager.add(task1);
         historyManager.add(task2);
-        historyManager.add(task3);
-        historyManager.add(task4);
-        historyManager.add(task5);
-        historyManager.add(task6);
-        historyManager.add(task7);
-        historyManager.add(task8);
-        historyManager.add(task9);
-        historyManager.add(task10);
-        historyManager.add(task11);
+        historyManager.add(updatedTask1);
 
         List<BaseTask> history = historyManager.getHistory();
-        Assertions.assertEquals(10, history.size());
-        Assertions.assertEquals(task2, history.getFirst());
-        Assertions.assertEquals(task11, history.getLast());
+        Task taskFromHistoryManager = (Task) history.get(1);
+        Assertions.assertEquals(2, history.size());
+        Assertions.assertEquals(TaskStatus.IN_PROGRESS, taskFromHistoryManager.getStatus());
+        Assertions.assertEquals("новое описание", taskFromHistoryManager.getDescription());
+        Assertions.assertEquals("Задача 1", taskFromHistoryManager.getTitle());
+    }
+
+    @Test
+    void testHistoryRemovesTasks() {
+        Task task1 = new Task("Задача 1", "описание", 12, TaskStatus.DONE);
+        Task task2 = new Task("Задача 2", "описание", 14, TaskStatus.DONE);
+        historyManager.add(task1);
+        historyManager.add(task2);
+        historyManager.remove(14);
+        int actualSize = historyManager.getHistory().size();
+        Assertions.assertEquals(1, actualSize);
     }
 }
