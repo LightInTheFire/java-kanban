@@ -2,6 +2,9 @@ package ru.light.utils;
 
 import ru.light.task.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CSVTaskFormatter {
     private CSVTaskFormatter() {
     }
@@ -50,5 +53,28 @@ public class CSVTaskFormatter {
             case SUBTASK -> new SubTask(title, description, id, status, Integer.parseInt(taskFields[5]));
             case EPICTASK -> new EpicTask(title, description, id);
         };
+    }
+
+    public static String tasksToIdString(List<BaseTask> tasks) {
+        List<Integer> ids = tasks.stream().map(BaseTask::getId).toList();
+
+        StringBuilder csvStringBuilder = new StringBuilder();
+        for (Integer id : ids) {
+            csvStringBuilder.append(id).append(",");
+        }
+
+        csvStringBuilder.deleteCharAt(csvStringBuilder.length() - 1);
+        return csvStringBuilder.toString();
+    }
+
+    public static List<Integer> idStringToList(String str) {
+        String[] strings = str.split(",");
+
+        List<Integer> ids = new ArrayList<>();
+        for (String string : strings) {
+            ids.add(Integer.parseInt(string));
+        }
+
+        return ids;
     }
 }
