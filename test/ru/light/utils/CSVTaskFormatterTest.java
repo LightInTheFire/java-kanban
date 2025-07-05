@@ -3,6 +3,8 @@ package ru.light.utils;
 import org.junit.jupiter.api.Test;
 import ru.light.task.*;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -64,5 +66,26 @@ class CSVTaskFormatterTest {
         assertDoesNotThrow(() -> {
             EpicTask epic = (EpicTask) taskFromCsv;
         });
+    }
+
+    @Test
+    void idStringToList() {
+        String ids = "1,2,3,4";
+        List<Integer> expectedIntegerList = List.of(1, 2, 3, 4);
+        List<Integer> actualIntegerList = CSVTaskFormatter.idStringToList(ids);
+        assertEquals(expectedIntegerList, actualIntegerList);
+    }
+
+    @Test
+    void tasksToIdString() {
+        Task task1 = new Task("Title", "Task Description", 2, TaskStatus.NEW);
+        Task task2 = new Task("Title", "Task Description", 3, TaskStatus.NEW);
+        Task task3 = new Task("Title", "Task Description", 4, TaskStatus.NEW);
+        List<BaseTask> tasks = List.of(task1, task2, task3);
+
+        String expectedString = "2,3,4";
+        String actualString = CSVTaskFormatter.tasksToIdString(tasks);
+
+        assertEquals(expectedString, actualString);
     }
 }
