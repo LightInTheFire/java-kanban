@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final Map<Integer, BaseTask> tasks;
-    HistoryManager historyManager;
-    private int idCounter = 0;
+    protected final Map<Integer, BaseTask> tasks;
+    protected HistoryManager historyManager;
+    protected int idCounter = 0;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
