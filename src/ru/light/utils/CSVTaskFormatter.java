@@ -56,6 +56,10 @@ public class CSVTaskFormatter {
     }
 
     public static String tasksToIdString(List<BaseTask> tasks) {
+        if (tasks.isEmpty()) {
+            return "";
+        }
+
         List<Integer> ids = tasks.stream().map(BaseTask::getId).toList();
 
         StringBuilder csvStringBuilder = new StringBuilder();
@@ -68,6 +72,9 @@ public class CSVTaskFormatter {
     }
 
     public static List<Integer> idStringToList(String str) {
+        if (str.isEmpty()) {
+            return List.of();
+        }
         String[] strings = str.split(",");
 
         List<Integer> ids = new ArrayList<>();
