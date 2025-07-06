@@ -3,7 +3,7 @@ package ru.light.managers.task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.light.managers.Managers;
+import ru.light.managers.history.InMemoryHistoryManager;
 import ru.light.task.*;
 
 import java.util.List;
@@ -13,7 +13,7 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     void setUp() {
-        taskManager = Managers.getDefault();
+        taskManager = new InMemoryTaskManager(new InMemoryHistoryManager());
     }
 
     @Test
