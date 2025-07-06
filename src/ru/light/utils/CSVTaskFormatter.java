@@ -15,7 +15,6 @@ public class CSVTaskFormatter {
 
     public static String toCSVString(BaseTask baseTask) {
         String formatPattern = "%s,%s,%s,%s,%s,%s";
-        StringBuilder csvStringBuilder = new StringBuilder();
         return switch (baseTask) {
             case EpicTask epicTask -> formatPattern.formatted(epicTask.getId(),
                     TaskType.EPICTASK,
@@ -60,15 +59,15 @@ public class CSVTaskFormatter {
             return "";
         }
 
-        List<Integer> ids = tasks.stream().map(BaseTask::getId).toList();
+        List<Integer> taskIdList = tasks.stream().map(BaseTask::getId).toList();
 
-        StringBuilder csvStringBuilder = new StringBuilder();
-        for (Integer id : ids) {
-            csvStringBuilder.append(id).append(",");
+        StringBuilder taskIdStringBuilder = new StringBuilder();
+        for (Integer taskId : taskIdList) {
+            taskIdStringBuilder.append(taskId).append(",");
         }
 
-        csvStringBuilder.deleteCharAt(csvStringBuilder.length() - 1);
-        return csvStringBuilder.toString();
+        taskIdStringBuilder.deleteCharAt(taskIdStringBuilder.length() - 1);
+        return taskIdStringBuilder.toString();
     }
 
     public static List<Integer> idStringToList(String str) {
