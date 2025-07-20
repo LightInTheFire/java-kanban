@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import ru.light.managers.history.InMemoryHistoryManager;
 import ru.light.task.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 class InMemoryTaskManagerTest {
@@ -19,7 +21,8 @@ class InMemoryTaskManagerTest {
     @Test
     public void testCantAddSubTaskWithEpicIdAsSubtaskId() {
         SubTask subTask = new SubTask("Подзадача 1", "описание",
-                null, TaskStatus.NEW, 0);
+                null, TaskStatus.NEW, 0, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
 
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 taskManager.addTask(subTask)
@@ -29,7 +32,8 @@ class InMemoryTaskManagerTest {
     @Test
     public void testCantAddSubTaskWithEpicIdEqualsNull() {
         SubTask subTask = new SubTask("Подзадача 1", "описание",
-                null, TaskStatus.NEW, null);
+                null, TaskStatus.NEW, null, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         Assertions.assertThrows(IllegalArgumentException.class, () ->
                 taskManager.addTask(subTask)
         );
@@ -37,17 +41,22 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testTaskNotChangingWhenAdding() {
-        Task task = new Task("Задача 1", "описание", null, TaskStatus.NEW);
+        Task task = new Task("Задача 1", "описание", null, TaskStatus.NEW,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         taskManager.addTask(task);
         Assertions.assertEquals(TaskStatus.NEW, task.getStatus());
         Assertions.assertEquals("Задача 1", task.getTitle());
         Assertions.assertEquals("описание", task.getDescription());
+        Assertions.assertEquals(Duration.ofHours(1), task.getDuration());
+        Assertions.assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1), task.getStartTime());
         Assertions.assertNotNull(task.getId());
     }
 
     @Test
     public void testTaskManagerAddingTasks() {
-        Task task = new Task("Задача 1", "описание", null, TaskStatus.NEW);
+        Task task = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         taskManager.addTask(task);
 
         List<Task> standardTasks = taskManager.getAllStandardTasks();
@@ -66,7 +75,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testAddingTaskWithId() {
-        Task task = new Task("Задача 1", "описание", 123, TaskStatus.NEW);
+        Task task = new Task("Задача 1", "описание", 123, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         taskManager.addTask(task);
 
         Assertions.assertEquals(0, task.getId());
@@ -74,8 +84,10 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testGetTaskWithId() {
-        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW);
-        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
 
@@ -84,7 +96,8 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void getThrowsWithIncorrectIdPassed() {
-        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         taskManager.addTask(task1);
 
         Assertions.assertThrows(IllegalArgumentException.class, ()
@@ -94,8 +107,10 @@ class InMemoryTaskManagerTest {
 
     @Test
     public void testShouldAddTasksToHistory() {
-        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW);
-        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.getById(task1.getId());
@@ -106,8 +121,10 @@ class InMemoryTaskManagerTest {
     }
     @Test
     public void testShouldRemoveTasksFromHistory() {
-        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW);
-        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW);
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.getById(task1.getId());

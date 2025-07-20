@@ -2,44 +2,55 @@ package ru.light.utils;
 
 import ru.light.task.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CSVTaskFormatter {
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     private CSVTaskFormatter() {
     }
 
     public static String getHeader() {
-        return "id,type,name,status,description,epicId";
+        return "id,type,name,status,description,duration,startTime,epicId";
     }
 
     public static String toCSVString(BaseTask baseTask) {
-        String formatPattern = "%s,%s,%s,%s,%s,%s";
+        String formatPattern = "%s,%s,%s,%s,%s,%d,%s,%s";
         return switch (baseTask) {
             case EpicTask epicTask -> formatPattern.formatted(epicTask.getId(),
                     TaskType.EPICTASK,
                     epicTask.getTitle(),
                     epicTask.getStatus(),
                     epicTask.getDescription(),
+                    epicTask.getDuration().toMinutes(),
+                    epicTask.getStartTime().format(formatter),
                     " ");
             case SubTask subTask -> formatPattern.formatted(subTask.getId(),
                     TaskType.SUBTASK,
                     subTask.getTitle(),
                     subTask.getStatus(),
                     subTask.getDescription(),
+                    subTask.getDuration().toMinutes(),
+                    subTask.getStartTime().format(formatter),
                     subTask.getEpicTaskId());
             case Task task -> formatPattern.formatted(task.getId(),
                     TaskType.TASK,
                     task.getTitle(),
                     task.getStatus(),
                     task.getDescription(),
+                    task.getDuration().toMinutes(),
+                    task.getStartTime().format(formatter),
                     " ");
         };
     }
 
     public static BaseTask fromCSVString(String str) {
         String[] taskFields = str.split(",");
-        if (taskFields.length != 6) {
+        if (taskFields.length != 8) {
             throw new IllegalArgumentException("Incorrect csv pattern");
         }
         int id = Integer.parseInt(taskFields[0]);
@@ -47,9 +58,13 @@ public class CSVTaskFormatter {
         String title = taskFields[2];
         TaskStatus status = TaskStatus.valueOf(taskFields[3]);
         String description = taskFields[4];
+        Duration duration = Duration.ofMinutes(Integer.parseInt(taskFields[5]));
+        LocalDateTime startTime = LocalDateTime.parse(taskFields[6], formatter);
+
         return switch (type) {
-            case TASK -> new Task(title, description, id, status);
-            case SUBTASK -> new SubTask(title, description, id, status, Integer.parseInt(taskFields[5]));
+            case TASK -> new Task(title, description, id, status, duration, startTime);
+            case SUBTASK -> new SubTask(title, description,
+                    id, status, Integer.parseInt(taskFields[7]), duration, startTime);
             case EPICTASK -> new EpicTask(title, description, id);
         };
     }
