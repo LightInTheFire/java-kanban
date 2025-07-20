@@ -70,7 +70,7 @@ class InMemoryTaskManagerTest {
 
         List<EpicTask> standardTasks = taskManager.getAllEpicsTasks();
         Assertions.assertEquals(1, standardTasks.size());
-        Assertions.assertEquals(epic, taskManager.getById(0));
+        Assertions.assertEquals(epic, taskManager.getById(0).get());
     }
 
     @Test
@@ -91,7 +91,7 @@ class InMemoryTaskManagerTest {
         taskManager.addTask(task1);
         taskManager.addTask(task2);
 
-        Assertions.assertEquals(task2, taskManager.getById(1));
+        Assertions.assertEquals(task2, taskManager.getById(1).get());
     }
 
     @Test

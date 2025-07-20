@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface TaskManager {
     List<BaseTask> getHistory();
 
-    BaseTask getById(int id);
+    Optional<BaseTask> getById(int id);
 
     void removeById(int id);
 

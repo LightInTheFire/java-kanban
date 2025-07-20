@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
@@ -53,8 +54,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public BaseTask getById(int id) {
-        BaseTask task = super.getById(id);
+    public Optional<BaseTask> getById(int id) {
+        Optional<BaseTask> task = super.getById(id);
         save();
         return task;
     }

@@ -27,11 +27,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public BaseTask getById(int id) {
+    public Optional<BaseTask> getById(int id) {
         BaseTask task = tasks.get(id);
         historyManager.add(task);
 
-        return task;
+        return Optional.ofNullable(task);
     }
 
     @Override
