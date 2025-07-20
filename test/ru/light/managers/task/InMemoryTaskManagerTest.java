@@ -3,6 +3,7 @@ package ru.light.managers.task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.light.managers.exceptions.TaskIntersectException;
 import ru.light.managers.history.InMemoryHistoryManager;
 import ru.light.task.*;
 
@@ -87,7 +88,7 @@ class InMemoryTaskManagerTest {
         Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
                 LocalDateTime.of(2020, 1, 1, 1, 1));
         Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
+                LocalDateTime.of(2021, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
 
@@ -110,7 +111,7 @@ class InMemoryTaskManagerTest {
         Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
                 LocalDateTime.of(2020, 1, 1, 1, 1));
         Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
+                LocalDateTime.of(2021, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.getById(task1.getId());
@@ -125,7 +126,7 @@ class InMemoryTaskManagerTest {
         Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
                 LocalDateTime.of(2020, 1, 1, 1, 1));
         Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
+                LocalDateTime.of(2021, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.getById(task1.getId());
@@ -156,5 +157,29 @@ class InMemoryTaskManagerTest {
         List<BaseTask> prioritizedTasks = taskManager.getPrioritizedTasks();
         Assertions.assertEquals(task1, prioritizedTasks.get(0));
         Assertions.assertEquals(task2, prioritizedTasks.get(1));
+    }
+
+    @Test
+    public void shouldNotAddIntersectingTasks() {
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(4),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        taskManager.addTask(task1);
+        Assertions.assertThrows(TaskIntersectException.class, () -> taskManager.addTask(task2));
+    }
+
+    @Test
+    public void shouldNotAddIntersectingSubTasks() {
+        EpicTask epic = new EpicTask("Эпик", "описание", null);
+        taskManager.addTask(epic);
+        SubTask subTask1 = new SubTask("Задача 1", "описание", null, TaskStatus.NEW, 0,
+                Duration.ofHours(4),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        SubTask subTask2 = new SubTask("Задача 2", "описание", null, TaskStatus.NEW, 0,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        taskManager.addTask(subTask1);
+        Assertions.assertThrows(TaskIntersectException.class, () -> taskManager.addTask(subTask2));
     }
 }

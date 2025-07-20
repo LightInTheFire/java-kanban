@@ -1,5 +1,6 @@
 package ru.light.managers.task;
 
+import ru.light.managers.exceptions.TaskIntersectException;
 import ru.light.managers.history.HistoryManager;
 import ru.light.task.BaseTask;
 import ru.light.task.EpicTask;
@@ -61,6 +62,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(BaseTask task) {
+        isNewTaskIntersects(task);
         switch (task) {
             case EpicTask ignored -> {
             }
@@ -87,20 +89,25 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(BaseTask task) {
+        isNewTaskIntersects(task);
         switch (task) {
             case EpicTask epicTask -> tasks.put(epicTask.getId(), epicTask);
             case SubTask subTask -> {
                 if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTaskOfSubtask)) {
                     throw new IllegalArgumentException();
                 }
-                prioritizedTasks.remove(subTask);
-                prioritizedTasks.add(subTask);
+                if (subTask.getStartTime() != null) {
+                    prioritizedTasks.remove(subTask);
+                    prioritizedTasks.add(subTask);
+                }
                 epicTaskOfSubtask.addSubTask(subTask);
                 tasks.put(subTask.getId(), subTask);
             }
             case Task standardTask -> {
-                prioritizedTasks.remove(standardTask);
-                prioritizedTasks.add(standardTask);
+                if (standardTask.getStartTime() != null) {
+                    prioritizedTasks.remove(standardTask);
+                    prioritizedTasks.add(standardTask);
+                }
                 tasks.put(standardTask.getId(), standardTask);
             }
         }
@@ -159,6 +166,24 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
         removeAllTasksOfCertainType(SubTask.class);
+    }
+
+    private void isNewTaskIntersects(BaseTask newTask) {
+        Optional<BaseTask> intersectedTask = prioritizedTasks.stream()
+                .filter(task -> isTwoTasksIntersect(newTask, task))
+                .findFirst();
+        if (intersectedTask.isPresent()) {
+            throw new TaskIntersectException("Задача *%s* не может быть добавлена, так как пересекается с *%s*"
+                    .formatted(newTask.getTitle(), intersectedTask.get().getTitle()));
+        }
+    }
+
+    private boolean isTwoTasksIntersect(BaseTask task1, BaseTask task2) {
+        if (task1.getStartTime() == null || task2.getStartTime() == null) {
+            return false;
+        }
+        return task1.getEndTime().isAfter(task2.getStartTime()) &&
+                task1.getEndTime().isBefore(task2.getEndTime());
     }
 
     private int getNextId() {
