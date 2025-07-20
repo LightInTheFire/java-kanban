@@ -119,6 +119,7 @@ class InMemoryTaskManagerTest {
 
         Assertions.assertEquals(2, history.size());
     }
+
     @Test
     public void testShouldRemoveTasksFromHistory() {
         Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
@@ -132,5 +133,28 @@ class InMemoryTaskManagerTest {
         taskManager.removeById(task2.getId());
         List<BaseTask> history = taskManager.getHistory();
         Assertions.assertEquals(1, history.size());
+    }
+
+    @Test
+    public void shouldNotAddTasksWithoutStartTimeToPrioritized() {
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                null);
+        taskManager.addTask(task1);
+        int expectedSize = 0;
+        int actualSize = taskManager.getPrioritizedTasks().size();
+        Assertions.assertEquals(expectedSize, actualSize);
+    }
+
+    @Test
+    public void shouldReturnPrioritizedTasksInNaturalOrder() {
+        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
+                LocalDateTime.of(2021, 1, 1, 1, 1));
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+        List<BaseTask> prioritizedTasks = taskManager.getPrioritizedTasks();
+        Assertions.assertEquals(task1, prioritizedTasks.get(0));
+        Assertions.assertEquals(task2, prioritizedTasks.get(1));
     }
 }

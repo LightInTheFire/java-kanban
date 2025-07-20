@@ -6,18 +6,17 @@ import ru.light.task.EpicTask;
 import ru.light.task.SubTask;
 import ru.light.task.Task;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, BaseTask> tasks;
+    protected final Set<BaseTask> prioritizedTasks;
     protected HistoryManager historyManager;
     protected int idCounter = 0;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
+        this.prioritizedTasks = new TreeSet<>(Comparator.comparing(BaseTask::getStartTime));
         this.historyManager = historyManager;
     }
 
@@ -45,6 +44,7 @@ public class InMemoryTaskManager implements TaskManager {
             case EpicTask epicTask -> {
                 for (SubTask subTask : epicTask.getSubTasks()) {
                     tasks.remove(subTask.getId());
+                    prioritizedTasks.remove(subTask);
                 }
             }
             case SubTask subTask -> {
@@ -53,8 +53,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
                 epicTask.removeSubTask(subTask);
             }
-            case Task ignored -> {
-            }
+            case Task standardTask -> prioritizedTasks.remove(standardTask);
         }
 
         historyManager.remove(removedTask.getId());
@@ -69,9 +68,15 @@ public class InMemoryTaskManager implements TaskManager {
                 if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTask)) {
                     throw new IllegalArgumentException("no epic for subtask");
                 }
+                if (subTask.getStartTime() != null) {
+                    prioritizedTasks.add(task);
+                }
                 epicTask.addSubTask(subTask);
             }
-            case Task ignored -> {
+            case Task standardTask -> {
+                if (standardTask.getStartTime() != null) {
+                    prioritizedTasks.add(standardTask);
+                }
             }
         }
         int id = getNextId();
@@ -88,11 +93,22 @@ public class InMemoryTaskManager implements TaskManager {
                 if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTaskOfSubtask)) {
                     throw new IllegalArgumentException();
                 }
+                prioritizedTasks.remove(subTask);
+                prioritizedTasks.add(subTask);
                 epicTaskOfSubtask.addSubTask(subTask);
                 tasks.put(subTask.getId(), subTask);
             }
-            case Task standardTask -> tasks.put(standardTask.getId(), standardTask);
+            case Task standardTask -> {
+                prioritizedTasks.remove(standardTask);
+                prioritizedTasks.add(standardTask);
+                tasks.put(standardTask.getId(), standardTask);
+            }
         }
+    }
+
+    @Override
+    public List<BaseTask> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
     }
 
     @Override
@@ -155,6 +171,7 @@ public class InMemoryTaskManager implements TaskManager {
                 .filter(pair -> taskClass.isInstance(pair.getValue()))
                 .toList();
         for (var entry : list) {
+            prioritizedTasks.remove(entry.getValue());
             tasks.remove(entry.getKey());
             historyManager.remove(entry.getKey());
         }
