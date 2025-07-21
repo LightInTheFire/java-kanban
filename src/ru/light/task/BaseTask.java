@@ -39,6 +39,10 @@ public abstract sealed class BaseTask implements Cloneable
         return startTime;
     }
 
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
     public LocalDateTime getEndTime() {
         return startTime.plus(duration);
     }

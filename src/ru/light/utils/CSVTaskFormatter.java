@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CSVTaskFormatter {
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private CSVTaskFormatter() {
     }
@@ -20,6 +20,9 @@ public class CSVTaskFormatter {
 
     public static String toCSVString(BaseTask baseTask) {
         String formatPattern = "%s,%s,%s,%s,%s,%d,%s,%s";
+        if (baseTask.getStartTime() == null) {
+            baseTask.setStartTime(LocalDateTime.MIN);
+        }
         return switch (baseTask) {
             case EpicTask epicTask -> formatPattern.formatted(epicTask.getId(),
                     TaskType.EPICTASK,
@@ -27,7 +30,7 @@ public class CSVTaskFormatter {
                     epicTask.getStatus(),
                     epicTask.getDescription(),
                     epicTask.getDuration().toMinutes(),
-                    epicTask.getStartTime().format(formatter),
+                    epicTask.getStartTime().format(DATE_TIME_FORMATTER),
                     " ");
             case SubTask subTask -> formatPattern.formatted(subTask.getId(),
                     TaskType.SUBTASK,
@@ -35,7 +38,7 @@ public class CSVTaskFormatter {
                     subTask.getStatus(),
                     subTask.getDescription(),
                     subTask.getDuration().toMinutes(),
-                    subTask.getStartTime().format(formatter),
+                    subTask.getStartTime().format(DATE_TIME_FORMATTER),
                     subTask.getEpicTaskId());
             case Task task -> formatPattern.formatted(task.getId(),
                     TaskType.TASK,
@@ -43,7 +46,7 @@ public class CSVTaskFormatter {
                     task.getStatus(),
                     task.getDescription(),
                     task.getDuration().toMinutes(),
-                    task.getStartTime().format(formatter),
+                    task.getStartTime().format(DATE_TIME_FORMATTER),
                     " ");
         };
     }
@@ -59,8 +62,10 @@ public class CSVTaskFormatter {
         TaskStatus status = TaskStatus.valueOf(taskFields[3]);
         String description = taskFields[4];
         Duration duration = Duration.ofMinutes(Integer.parseInt(taskFields[5]));
-        LocalDateTime startTime = LocalDateTime.parse(taskFields[6], formatter);
-
+        LocalDateTime startTime = LocalDateTime.parse(taskFields[6], DATE_TIME_FORMATTER);
+        if (startTime.equals(LocalDateTime.MIN)) {
+            startTime = null;
+        }
         return switch (type) {
             case TASK -> new Task(title, description, id, status, duration, startTime);
             case SUBTASK -> new SubTask(title, description,

@@ -5,6 +5,9 @@ import ru.light.managers.exceptions.ManagerLoadException;
 import ru.light.managers.exceptions.ManagerSaveException;
 import ru.light.managers.history.HistoryManager;
 import ru.light.task.BaseTask;
+import ru.light.task.EpicTask;
+import ru.light.task.SubTask;
+import ru.light.task.Task;
 import ru.light.utils.CSVTaskFormatter;
 
 import java.io.BufferedWriter;
@@ -34,7 +37,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
 
         String history = lines[lines.length - 1];
-
         for (int i = 1, linesLength = lines.length - 2; i < linesLength; i++) {
             String line = lines[i];
 
@@ -43,7 +45,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             if (baseTask.getId() > taskManager.idCounter) {
                 taskManager.idCounter = baseTask.getId();
             }
-            taskManager.addTask(baseTask);
+            switch (baseTask) {
+                case EpicTask epicTask -> taskManager.tasks.put(epicTask.getId(), epicTask);
+                case SubTask subTask -> {
+                    if (!(taskManager.tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTask)) {
+                        throw new ManagerLoadException("no epic for subtask");
+                    }
+                    taskManager.tasks.put(subTask.getId(), subTask);
+                    epicTask.addSubTask(subTask);
+                }
+                case Task task -> taskManager.tasks.put(task.getId(), task);
+            }
+
         }
 
         for (Integer id : CSVTaskFormatter.idStringToList(history)) {
