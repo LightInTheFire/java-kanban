@@ -12,9 +12,24 @@ import java.util.List;
 
 abstract class TaskManagerTest<T extends TaskManager> {
     protected T taskManager;
+    protected BaseTask task1;
+    protected BaseTask task2;
+
 
     @BeforeEach
     void setup() {
+        task1 = new Task("Задача 1",
+                "описание",
+                null,
+                TaskStatus.NEW,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        task2 = new Task("Задача 2",
+                "описание",
+                null,
+                TaskStatus.NEW,
+                Duration.ofHours(1),
+                LocalDateTime.of(2021, 1, 1, 1, 1));
         taskManager = createTaskManager();
     }
 
@@ -44,23 +59,18 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void testTaskNotChangingWhenAdding() {
-        Task task = new Task("Задача 1", "описание", null, TaskStatus.NEW,
-                Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
-        taskManager.addTask(task);
-        Assertions.assertEquals(TaskStatus.NEW, task.getStatus());
-        Assertions.assertEquals("Задача 1", task.getTitle());
-        Assertions.assertEquals("описание", task.getDescription());
-        Assertions.assertEquals(Duration.ofHours(1), task.getDuration());
-        Assertions.assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1), task.getStartTime());
-        Assertions.assertNotNull(task.getId());
+        taskManager.addTask(task1);
+        Assertions.assertEquals(TaskStatus.NEW, task1.getStatus());
+        Assertions.assertEquals("Задача 1", task1.getTitle());
+        Assertions.assertEquals("описание", task1.getDescription());
+        Assertions.assertEquals(Duration.ofHours(1), task1.getDuration());
+        Assertions.assertEquals(LocalDateTime.of(2020, 1, 1, 1, 1), task1.getStartTime());
+        Assertions.assertNotNull(task1.getId());
     }
 
     @Test
     public void testTaskManagerAddingTasks() {
-        Task task = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
-        taskManager.addTask(task);
+        taskManager.addTask(task1);
 
         List<Task> standardTasks = taskManager.getAllStandardTasks();
         Assertions.assertEquals(1, standardTasks.size());
@@ -87,10 +97,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void testGetTaskWithId() {
-        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
-        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2021, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
 
@@ -99,8 +105,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void getThrowsWithIncorrectIdPassed() {
-        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
         taskManager.addTask(task1);
 
         Assertions.assertThrows(IllegalArgumentException.class, ()
@@ -110,10 +114,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void testShouldAddTasksToHistory() {
-        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
-        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2021, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.getById(task1.getId());
@@ -125,10 +125,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void testShouldRemoveTasksFromHistory() {
-        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
-        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2021, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.getById(task1.getId());
@@ -150,10 +146,6 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void shouldReturnPrioritizedTasksInNaturalOrder() {
-        Task task1 = new Task("Задача 1", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
-        Task task2 = new Task("Задача 2", "описание", null, TaskStatus.NEW, Duration.ofHours(1),
-                LocalDateTime.of(2021, 1, 1, 1, 1));
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         List<BaseTask> prioritizedTasks = taskManager.getPrioritizedTasks();
