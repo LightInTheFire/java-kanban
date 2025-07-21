@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -37,8 +38,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
 
         String history = lines[lines.length - 1];
-        for (int i = 1, linesLength = lines.length - 2; i < linesLength; i++) {
-            String line = lines[i];
+        for (int lineIndex = 1, linesLength = lines.length - 2; lineIndex < linesLength; lineIndex++) {
+            String line = lines[lineIndex];
 
             BaseTask baseTask = CSVTaskFormatter.fromCSVString(line);
 
@@ -58,11 +59,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
 
         }
+        try {
+            List<Integer> historyIdList = CSVTaskFormatter.idStringToList(history);
+            for (Integer id : historyIdList) {
+                taskManager.getById(id);
+            }
 
-        for (Integer id : CSVTaskFormatter.idStringToList(history)) {
-            taskManager.getById(id);
+        } catch (NumberFormatException ignored) {
         }
-
         return taskManager;
     }
 
