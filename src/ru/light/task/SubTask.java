@@ -1,5 +1,8 @@
 package ru.light.task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public final class SubTask extends BaseTask {
     Integer epicTaskId;
 
@@ -7,8 +10,10 @@ public final class SubTask extends BaseTask {
                    String description,
                    Integer id,
                    TaskStatus status,
-                   Integer epicTaskId) {
-        super(title, description, id, status);
+                   Integer epicTaskId,
+                   Duration duration,
+                   LocalDateTime startTime) {
+        super(title, description, id, status,  duration, startTime);
         this.epicTaskId = epicTaskId;
     }
 

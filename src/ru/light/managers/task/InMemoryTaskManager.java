@@ -1,23 +1,23 @@
 package ru.light.managers.task;
 
+import ru.light.managers.exceptions.TaskIntersectException;
 import ru.light.managers.history.HistoryManager;
 import ru.light.task.BaseTask;
 import ru.light.task.EpicTask;
 import ru.light.task.SubTask;
 import ru.light.task.Task;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected final Map<Integer, BaseTask> tasks;
+    protected final Set<BaseTask> prioritizedTasks;
     protected HistoryManager historyManager;
     protected int idCounter = 0;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
+        this.prioritizedTasks = new TreeSet<>(Comparator.comparing(BaseTask::getStartTime));
         this.historyManager = historyManager;
     }
 
@@ -27,11 +27,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public BaseTask getById(int id) {
+    public Optional<BaseTask> getById(int id) {
         BaseTask task = tasks.get(id);
         historyManager.add(task);
 
-        return task;
+        return Optional.ofNullable(task);
     }
 
     @Override
@@ -45,6 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
             case EpicTask epicTask -> {
                 for (SubTask subTask : epicTask.getSubTasks()) {
                     tasks.remove(subTask.getId());
+                    prioritizedTasks.remove(subTask);
                 }
             }
             case SubTask subTask -> {
@@ -53,8 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
                 }
                 epicTask.removeSubTask(subTask);
             }
-            case Task ignored -> {
-            }
+            case Task standardTask -> prioritizedTasks.remove(standardTask);
         }
 
         historyManager.remove(removedTask.getId());
@@ -62,6 +62,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(BaseTask task) {
+        isNewTaskIntersects(task);
         switch (task) {
             case EpicTask ignored -> {
             }
@@ -69,9 +70,15 @@ public class InMemoryTaskManager implements TaskManager {
                 if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTask)) {
                     throw new IllegalArgumentException("no epic for subtask");
                 }
+                if (subTask.getStartTime() != null) {
+                    prioritizedTasks.add(task);
+                }
                 epicTask.addSubTask(subTask);
             }
-            case Task ignored -> {
+            case Task standardTask -> {
+                if (standardTask.getStartTime() != null) {
+                    prioritizedTasks.add(standardTask);
+                }
             }
         }
         int id = getNextId();
@@ -82,17 +89,33 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateTask(BaseTask task) {
+        isNewTaskIntersects(task);
         switch (task) {
             case EpicTask epicTask -> tasks.put(epicTask.getId(), epicTask);
             case SubTask subTask -> {
                 if (!(tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTaskOfSubtask)) {
                     throw new IllegalArgumentException();
                 }
+                if (subTask.getStartTime() != null) {
+                    prioritizedTasks.remove(subTask);
+                    prioritizedTasks.add(subTask);
+                }
                 epicTaskOfSubtask.addSubTask(subTask);
                 tasks.put(subTask.getId(), subTask);
             }
-            case Task standardTask -> tasks.put(standardTask.getId(), standardTask);
+            case Task standardTask -> {
+                if (standardTask.getStartTime() != null) {
+                    prioritizedTasks.remove(standardTask);
+                    prioritizedTasks.add(standardTask);
+                }
+                tasks.put(standardTask.getId(), standardTask);
+            }
         }
+    }
+
+    @Override
+    public List<BaseTask> getPrioritizedTasks() {
+        return new ArrayList<>(prioritizedTasks);
     }
 
     @Override
@@ -145,6 +168,24 @@ public class InMemoryTaskManager implements TaskManager {
         removeAllTasksOfCertainType(SubTask.class);
     }
 
+    private void isNewTaskIntersects(BaseTask newTask) {
+        Optional<BaseTask> intersectedTask = prioritizedTasks.stream()
+                .filter(task -> isTwoTasksIntersect(newTask, task))
+                .findFirst();
+        if (intersectedTask.isPresent()) {
+            throw new TaskIntersectException("Задача *%s* не может быть добавлена, так как пересекается с *%s*"
+                    .formatted(newTask.getTitle(), intersectedTask.get().getTitle()));
+        }
+    }
+
+    private boolean isTwoTasksIntersect(BaseTask task1, BaseTask task2) {
+        if (task1.getStartTime() == null || task2.getStartTime() == null) {
+            return false;
+        }
+        return task1.getEndTime().isAfter(task2.getStartTime()) &&
+                task1.getEndTime().isBefore(task2.getEndTime());
+    }
+
     private int getNextId() {
         return idCounter++;
     }
@@ -155,6 +196,7 @@ public class InMemoryTaskManager implements TaskManager {
                 .filter(pair -> taskClass.isInstance(pair.getValue()))
                 .toList();
         for (var entry : list) {
+            prioritizedTasks.remove(entry.getValue());
             tasks.remove(entry.getKey());
             historyManager.remove(entry.getKey());
         }

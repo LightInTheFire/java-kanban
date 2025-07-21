@@ -11,13 +11,15 @@ import java.util.Optional;
 public interface TaskManager {
     List<BaseTask> getHistory();
 
-    BaseTask getById(int id);
+    Optional<BaseTask> getById(int id);
 
     void removeById(int id);
 
     void addTask(BaseTask task);
 
     void updateTask(BaseTask task);
+
+    List<BaseTask> getPrioritizedTasks();
 
     Optional<List<SubTask>> getAllSubtasksOfEpic(int id);
 
