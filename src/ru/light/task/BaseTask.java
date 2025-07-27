@@ -1,19 +1,25 @@
 package ru.light.task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public abstract sealed class BaseTask implements Cloneable
         permits Task, SubTask, EpicTask {
+    protected Duration duration;
+    protected LocalDateTime startTime;
     private String title;
     private String description;
     private Integer id;
     private TaskStatus status;
 
-    public BaseTask(String title, String description, Integer id, TaskStatus status) {
+    public BaseTask(String title, String description, Integer id, TaskStatus status, Duration duration, LocalDateTime startTime) {
         this.title = title;
         this.description = description;
         this.id = id;
         this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public BaseTask(BaseTask baseTask) {
@@ -21,6 +27,24 @@ public abstract sealed class BaseTask implements Cloneable
         this.description = baseTask.description;
         this.id = baseTask.id;
         this.status = baseTask.status;
+        this.duration = baseTask.duration;
+        this.startTime = baseTask.startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
     }
 
     public String getTitle() {

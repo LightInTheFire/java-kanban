@@ -3,6 +3,8 @@ package ru.light.utils;
 import org.junit.jupiter.api.Test;
 import ru.light.task.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -12,28 +14,38 @@ class CSVTaskFormatterTest {
 
     @Test
     void taskToCSVString() {
-        Task task = new Task("Title", "Task Description", 3, TaskStatus.NEW);
+        Task task = new Task("Title", "Task Description", 3, TaskStatus.NEW,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         String csvString = CSVTaskFormatter.toCSVString(task);
-        assertEquals("3,TASK,Title,NEW,Task Description, ", csvString);
+        assertEquals("3,TASK,Title,NEW,Task Description,60,2020-01-01 01:01:00, ", csvString);
     }
 
     @Test
     void subTaskToCSVString() {
-        SubTask task = new SubTask("Title", "Task Description", 3, TaskStatus.NEW, 11);
+        SubTask task = new SubTask("Title", "Task Description", 3, TaskStatus.NEW, 11,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         String csvString = CSVTaskFormatter.toCSVString(task);
-        assertEquals("3,SUBTASK,Title,NEW,Task Description,11", csvString);
+        assertEquals("3,SUBTASK,Title,NEW,Task Description,60,2020-01-01 01:01:00,11", csvString);
     }
 
     @Test
     void epicTaskToCSVString() {
         EpicTask task = new EpicTask("Title", "Epic Task Description", 3);
+        SubTask subtask = new SubTask("Title", "Task Description", 2, TaskStatus.NEW, 3,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        task.addSubTask(subtask);
         String csvString = CSVTaskFormatter.toCSVString(task);
-        assertEquals("3,EPICTASK,Title,NEW,Epic Task Description, ", csvString);
+        assertEquals("3,EPICTASK,Title,NEW,Epic Task Description,60,2020-01-01 01:01:00, ", csvString);
     }
 
     @Test
     void taskFromCSVString() {
-        Task task = new Task("Title", "Task Description", 3, TaskStatus.NEW);
+        Task task = new Task("Title", "Task Description", 3, TaskStatus.NEW,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         String csvString = CSVTaskFormatter.toCSVString(task);
         BaseTask taskFromCsv = CSVTaskFormatter.fromCSVString(csvString);
         assertEquals(task.getTitle(), taskFromCsv.getTitle());
@@ -44,7 +56,9 @@ class CSVTaskFormatterTest {
 
     @Test
     void subTaskFromCSVString() {
-        SubTask task = new SubTask("Title", "Task Description", 3, TaskStatus.NEW, 11);
+        SubTask task = new SubTask("Title", "Task Description", 3, TaskStatus.NEW, 11,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         String csvString = CSVTaskFormatter.toCSVString(task);
         SubTask taskFromCsv = (SubTask) CSVTaskFormatter.fromCSVString(csvString);
         assertEquals(task.getTitle(), taskFromCsv.getTitle());
@@ -52,6 +66,9 @@ class CSVTaskFormatterTest {
         assertEquals(task.getStatus(), taskFromCsv.getStatus());
         assertEquals(task.getId(), taskFromCsv.getId());
         assertEquals(task.getEpicTaskId(), taskFromCsv.getEpicTaskId());
+        assertEquals(task.getDuration(), taskFromCsv.getDuration());
+        assertEquals(task.getStartTime(), taskFromCsv.getStartTime());
+
     }
 
     @Test
@@ -78,9 +95,15 @@ class CSVTaskFormatterTest {
 
     @Test
     void tasksToIdString() {
-        Task task1 = new Task("Title", "Task Description", 2, TaskStatus.NEW);
-        Task task2 = new Task("Title", "Task Description", 3, TaskStatus.NEW);
-        Task task3 = new Task("Title", "Task Description", 4, TaskStatus.NEW);
+        Task task1 = new Task("Title", "Task Description", 2, TaskStatus.NEW,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        Task task2 = new Task("Title", "Task Description", 3, TaskStatus.NEW,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
+        Task task3 = new Task("Title", "Task Description", 4, TaskStatus.NEW,
+                Duration.ofHours(1),
+                LocalDateTime.of(2020, 1, 1, 1, 1));
         List<BaseTask> tasks = List.of(task1, task2, task3);
 
         String expectedString = "2,3,4";

@@ -5,6 +5,9 @@ import ru.light.managers.exceptions.ManagerLoadException;
 import ru.light.managers.exceptions.ManagerSaveException;
 import ru.light.managers.history.HistoryManager;
 import ru.light.task.BaseTask;
+import ru.light.task.EpicTask;
+import ru.light.task.SubTask;
+import ru.light.task.Task;
 import ru.light.utils.CSVTaskFormatter;
 
 import java.io.BufferedWriter;
@@ -12,6 +15,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.Optional;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
@@ -33,28 +38,41 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
 
         String history = lines[lines.length - 1];
-
-        for (int i = 1, linesLength = lines.length - 2; i < linesLength; i++) {
-            String line = lines[i];
+        for (int lineIndex = 1, linesLength = lines.length - 2; lineIndex < linesLength; lineIndex++) {
+            String line = lines[lineIndex];
 
             BaseTask baseTask = CSVTaskFormatter.fromCSVString(line);
 
             if (baseTask.getId() > taskManager.idCounter) {
                 taskManager.idCounter = baseTask.getId();
             }
-            taskManager.addTask(baseTask);
-        }
+            switch (baseTask) {
+                case EpicTask epicTask -> taskManager.tasks.put(epicTask.getId(), epicTask);
+                case SubTask subTask -> {
+                    if (!(taskManager.tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTask)) {
+                        throw new ManagerLoadException("no epic for subtask");
+                    }
+                    taskManager.tasks.put(subTask.getId(), subTask);
+                    epicTask.addSubTask(subTask);
+                }
+                case Task task -> taskManager.tasks.put(task.getId(), task);
+            }
 
-        for (Integer id : CSVTaskFormatter.idStringToList(history)) {
-            taskManager.getById(id);
         }
+        try {
+            List<Integer> historyIdList = CSVTaskFormatter.idStringToList(history);
+            for (Integer id : historyIdList) {
+                taskManager.getById(id);
+            }
 
+        } catch (NumberFormatException ignored) {
+        }
         return taskManager;
     }
 
     @Override
-    public BaseTask getById(int id) {
-        BaseTask task = super.getById(id);
+    public Optional<BaseTask> getById(int id) {
+        Optional<BaseTask> task = super.getById(id);
         save();
         return task;
     }

@@ -1,15 +1,18 @@
 package ru.light.task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class EpicTask extends BaseTask {
     private final List<SubTask> subTasks;
+    private LocalDateTime endTime;
 
     public EpicTask(String title, String description, Integer id) {
-        super(title, description, id, TaskStatus.NEW);
+        super(title, description, id, TaskStatus.NEW, Duration.ZERO, LocalDateTime.MAX);
         this.subTasks = new ArrayList<>();
-        calculateEpicStatus();
+        calculateEpicState();
     }
 
     public void addSubTask(SubTask subTask) {
@@ -20,24 +23,25 @@ public final class EpicTask extends BaseTask {
             subTasks.add(subTask);
         }
 
-        calculateEpicStatus();
+        calculateEpicState();
     }
 
     public void clearSubTasks() {
         subTasks.clear();
-        calculateEpicStatus();
+
+        calculateEpicState();
     }
 
     public void removeSubTask(SubTask subTask) {
         subTasks.remove(subTask);
 
-        calculateEpicStatus();
+        calculateEpicState();
     }
 
     public void removeSubTaskById(Integer id) {
         subTasks.removeIf(subTask -> subTask.getId().equals(id));
 
-        calculateEpicStatus();
+        calculateEpicState();
     }
 
     public List<SubTask> getSubTasks() {
@@ -47,6 +51,39 @@ public final class EpicTask extends BaseTask {
     @Override
     public void setStatus(TaskStatus status) {
         calculateEpicStatus();
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        calculateEpicEndTime();
+        return endTime;
+    }
+
+    private void calculateEpicState() {
+        calculateEpicStartTime();
+        calculateEpicEndTime();
+        calculateEpicDuration();
+        calculateEpicStatus();
+    }
+
+    private void calculateEpicDuration() {
+        this.duration = subTasks.stream()
+               .map(SubTask::getDuration)
+               .reduce(Duration.ZERO, Duration::plus);
+    }
+
+    private void calculateEpicStartTime() {
+        this.startTime = subTasks.stream()
+                .map(SubTask::getStartTime)
+                .min(LocalDateTime::compareTo)
+                .orElse(LocalDateTime.MAX);
+    }
+
+    private void calculateEpicEndTime() {
+        this.endTime = subTasks.stream()
+                .map(SubTask::getEndTime)
+                .max(LocalDateTime::compareTo)
+                .orElse(LocalDateTime.MAX);
     }
 
     private void calculateEpicStatus() {
