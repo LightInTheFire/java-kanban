@@ -25,3 +25,4 @@ hs_err_pid*
 /.idea/material_theme_project_new.xml
 /.idea/checkstyle-idea.xml
 /resources/data.csv
+/.idea/libraries/
