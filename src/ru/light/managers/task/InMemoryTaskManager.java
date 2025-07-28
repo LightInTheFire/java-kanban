@@ -119,12 +119,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Optional<List<SubTask>> getAllSubtasksOfEpic(int id) {
+    public List<SubTask> getAllSubtasksOfEpic(int id) {
         return switch (tasks.get(id)) {
-            case EpicTask epicTask -> Optional.of(epicTask.getSubTasks());
-            case SubTask ignored -> Optional.empty();
-            case Task ignored -> Optional.empty();
-            case null -> Optional.empty();
+            case EpicTask epicTask -> epicTask.getSubTasks();
+            case SubTask ignored -> List.of();
+            case Task ignored -> List.of();
+            case null -> List.of();
         };
     }
 

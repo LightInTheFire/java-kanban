@@ -21,7 +21,7 @@ public interface TaskManager {
 
     List<BaseTask> getPrioritizedTasks();
 
-    Optional<List<SubTask>> getAllSubtasksOfEpic(int id);
+    List<SubTask> getAllSubtasksOfEpic(int id);
 
     List<EpicTask> getAllEpicsTasks();
 
