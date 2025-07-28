@@ -76,7 +76,7 @@ public class CSVTaskFormatter {
 
     public static String tasksToIdString(List<BaseTask> tasks) {
         if (tasks.isEmpty()) {
-            return "";
+            return " ";
         }
 
         List<Integer> taskIdList = tasks.stream().map(BaseTask::getId).toList();
