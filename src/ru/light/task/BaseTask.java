@@ -94,11 +94,14 @@ public abstract sealed class BaseTask implements Cloneable
 
     @Override
     public String toString() {
-        return "Task[" +
-                "title=" + title + ", " +
-                "description=" + description + ", " +
-                "id=" + id + ", " +
-                "status=" + status + ']';
+        return "BaseTask{" +
+                "duration=" + duration +
+                ", startTime=" + startTime +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                '}';
     }
 
     @Override
