@@ -63,4 +63,27 @@ public abstract class BaseHttpHandler implements HttpHandler {
         return exchange.getRequestURI().getPath().split("/");
     }
 
+    protected void handleDelete(HttpExchange exchange) {
+        String[] pathParts = splitURI(exchange);
+        if (pathParts.length != 3) {
+            sendResponseNotFound(exchange, "Bad Request");
+            return;
+        }
+
+        int taskId;
+        try {
+            taskId = Integer.parseInt(pathParts[2]);
+        } catch (NumberFormatException e) {
+            sendResponseNotFound(exchange, "Not a number");
+            return;
+        }
+
+        try {
+            taskManager.removeById(taskId);
+        } catch (IllegalArgumentException e) {
+            sendResponseNotFound(exchange, "No task with such id");
+        }
+
+        sendResponse(exchange, "task with id: %d successfully deleted".formatted(taskId), 200);
+    }
 }
