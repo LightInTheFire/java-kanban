@@ -122,9 +122,9 @@ public class InMemoryTaskManager implements TaskManager {
     public List<SubTask> getAllSubtasksOfEpic(int id) {
         return switch (tasks.get(id)) {
             case EpicTask epicTask -> epicTask.getSubTasks();
-            case SubTask ignored -> List.of();
-            case Task ignored -> List.of();
-            case null -> List.of();
+            case SubTask ignored -> throw new IllegalArgumentException();
+            case Task ignored -> throw new IllegalArgumentException();
+            case null -> throw new IllegalArgumentException();
         };
     }
 
