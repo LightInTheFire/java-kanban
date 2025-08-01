@@ -50,7 +50,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(new InMemoryHistoryManager(), file);
         Task newTask = new Task("Title", "Task Description", null, TaskStatus.NEW,
                 Duration.ofHours(1),
-                LocalDateTime.of(2020, 1, 1, 1, 1));
+                LocalDateTime.of(2021, 1, 1, 1, 1));
         fileBackedTaskManager.addTask(newTask);
         EpicTask epic = new EpicTask("Epic Title", "Epic desc", null);
         fileBackedTaskManager.addTask(epic);
