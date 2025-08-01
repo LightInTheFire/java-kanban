@@ -8,7 +8,6 @@ import ru.light.managers.task.TaskManager;
 import ru.light.task.BaseTask;
 import ru.light.task.Task;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +17,7 @@ public class TaskHttpHandler extends BaseHttpHandler {
     }
 
     @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
         switch (exchange.getRequestMethod()) {
             case "GET" -> handleGet(exchange);
             case "POST" -> handlePost(exchange);
