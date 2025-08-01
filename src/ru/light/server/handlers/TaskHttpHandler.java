@@ -5,11 +5,9 @@ import com.google.gson.JsonSyntaxException;
 import com.sun.net.httpserver.HttpExchange;
 import ru.light.managers.exceptions.TaskIntersectException;
 import ru.light.managers.task.TaskManager;
-import ru.light.task.BaseTask;
 import ru.light.task.Task;
 
 import java.util.List;
-import java.util.Optional;
 
 public class TaskHttpHandler extends BaseHttpHandler {
     public TaskHttpHandler(TaskManager taskManager, Gson gson) {
@@ -34,20 +32,7 @@ public class TaskHttpHandler extends BaseHttpHandler {
                 String allTasksJson = gson.toJson(allTasks);
                 sendResponse(exchange, allTasksJson, 200);
             }
-            case 3 -> {
-                int taskId;
-                try {
-                    taskId = Integer.parseInt(pathParts[2]);
-                } catch (NumberFormatException e) {
-                    sendResponseNotFound(exchange, "Not a number");
-                    return;
-                }
-
-                Optional<BaseTask> taskById = taskManager.getById(taskId);
-                taskById.ifPresentOrElse(baseTask ->
-                                sendResponse(exchange, gson.toJson(baseTask), 200),
-                        () -> sendResponseNotFound(exchange, "Not found"));
-            }
+            case 3 -> handleGetTaskById(exchange, pathParts);
             default -> sendResponseNotFound(exchange, "Bad Request");
         }
     }
@@ -71,7 +56,7 @@ public class TaskHttpHandler extends BaseHttpHandler {
             try {
                 taskManager.updateTask(taskFromRequest);
             } catch (TaskIntersectException e) {
-                sendResponseHasOverlaps(exchange, "Task intersect failed");
+                sendResponseHasOverlaps(exchange, e.getMessage());
             }
             sendResponse(exchange,
                     "Task with id %d successfully updated".formatted(taskFromRequest.getId()),
@@ -87,7 +72,6 @@ public class TaskHttpHandler extends BaseHttpHandler {
                     "Task successfully added with id %d".formatted(taskFromRequest.getId()),
                     201);
         }
-
     }
 
 }

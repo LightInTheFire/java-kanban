@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import ru.light.managers.task.TaskManager;
+import ru.light.task.BaseTask;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class BaseHttpHandler implements HttpHandler {
     public static final Charset STANDARD_CHARSET = StandardCharsets.UTF_8;
@@ -85,5 +87,20 @@ public abstract class BaseHttpHandler implements HttpHandler {
         }
 
         sendResponse(exchange, "task with id: %d successfully deleted".formatted(taskId), 200);
+    }
+
+    protected void handleGetTaskById(HttpExchange exchange, String[] pathParts) {
+        int taskId;
+        try {
+            taskId = Integer.parseInt(pathParts[2]);
+        } catch (NumberFormatException e) {
+            sendResponseNotFound(exchange, "Not a number");
+            return;
+        }
+
+        Optional<BaseTask> taskById = taskManager.getById(taskId);
+        taskById.ifPresentOrElse(baseTask ->
+                        sendResponse(exchange, gson.toJson(baseTask), 200),
+                () -> sendResponseNotFound(exchange, "Not found"));
     }
 }
