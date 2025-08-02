@@ -52,10 +52,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     if (!(taskManager.tasks.get(subTask.getEpicTaskId()) instanceof EpicTask epicTask)) {
                         throw new ManagerLoadException("no epic for subtask");
                     }
+                    if (subTask.getStartTime() != null) {
+                        taskManager.prioritizedTasks.add(subTask);
+                    }
                     taskManager.tasks.put(subTask.getId(), subTask);
                     epicTask.addSubTask(subTask);
                 }
-                case Task task -> taskManager.tasks.put(task.getId(), task);
+                case Task task -> {
+                    if (task.getStartTime() != null) {
+                        taskManager.prioritizedTasks.add(task);
+                    }
+                    taskManager.tasks.put(task.getId(), task);
+                }
             }
 
         }

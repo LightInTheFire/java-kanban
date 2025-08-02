@@ -119,12 +119,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Optional<List<SubTask>> getAllSubtasksOfEpic(int id) {
+    public List<SubTask> getAllSubtasksOfEpic(int id) {
         return switch (tasks.get(id)) {
-            case EpicTask epicTask -> Optional.of(epicTask.getSubTasks());
-            case SubTask ignored -> Optional.empty();
-            case Task ignored -> Optional.empty();
-            case null -> Optional.empty();
+            case EpicTask epicTask -> epicTask.getSubTasks();
+            case SubTask ignored -> throw new IllegalArgumentException();
+            case Task ignored -> throw new IllegalArgumentException();
+            case null -> throw new IllegalArgumentException();
         };
     }
 
@@ -173,8 +173,10 @@ public class InMemoryTaskManager implements TaskManager {
                 .filter(task -> isTwoTasksIntersect(newTask, task))
                 .findFirst();
         if (intersectedTask.isPresent()) {
-            throw new TaskIntersectException("Задача *%s* не может быть добавлена, так как пересекается с *%s*"
-                    .formatted(newTask.getTitle(), intersectedTask.get().getTitle()));
+            if (!intersectedTask.get().getId().equals(newTask.getId())) {
+                throw new TaskIntersectException("Задача *%s* не может быть добавлена, так как пересекается с *%s*"
+                        .formatted(newTask.getTitle(), intersectedTask.get().getTitle()));
+            }
         }
     }
 
@@ -182,8 +184,8 @@ public class InMemoryTaskManager implements TaskManager {
         if (task1.getStartTime() == null || task2.getStartTime() == null) {
             return false;
         }
-        return task1.getEndTime().isAfter(task2.getStartTime()) &&
-                task1.getEndTime().isBefore(task2.getEndTime());
+        return !(task1.getEndTime().isBefore(task2.getStartTime()) ||
+                task2.getEndTime().isBefore(task1.getStartTime()));
     }
 
     private int getNextId() {

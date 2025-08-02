@@ -6,7 +6,6 @@ import ru.light.task.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 public class Main {
 
@@ -67,7 +66,7 @@ public class Main {
         for (EpicTask epic : manager.getAllEpicsTasks()) {
             System.out.println(epic);
 
-            for (SubTask task : manager.getAllSubtasksOfEpic(epic.getId()).orElse(new ArrayList<>())) {
+            for (SubTask task : manager.getAllSubtasksOfEpic(epic.getId())) {
                 System.out.println("--> " + task);
             }
         }
