@@ -27,6 +27,7 @@ public class PrioritizedHttpHandlerTest {
     private TaskManager taskManager;
     private Task task1;
     private Task task2;
+    private static final String BASE_URI = "http://localhost:8080/history";
 
     @BeforeEach
     public void setup() {
@@ -58,7 +59,7 @@ public class PrioritizedHttpHandlerTest {
         taskManager.getById(task1.getId());
         taskManager.addTask(task2);
         taskManager.getById(task2.getId());
-        URI uri = URI.create("http://localhost:8080/history");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()

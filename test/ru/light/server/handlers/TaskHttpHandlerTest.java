@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class TaskHttpHandlerTest {
+    public static final String BASE_URI = "http://localhost:8080/tasks";
     private HttpTaskServer httpTaskServer;
     private TaskManager taskManager;
     private Task task;
@@ -52,7 +53,7 @@ class TaskHttpHandlerTest {
         Task newTask = (Task) task.clone();
         newTask.setId(null);
         String taskJson = httpTaskServer.getGson().toJson(newTask);
-        URI uri = URI.create("http://localhost:8080/tasks");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .POST(HttpRequest.BodyPublishers.ofString(taskJson))
@@ -70,7 +71,7 @@ class TaskHttpHandlerTest {
         Task newTask = (Task) task.clone();
         newTask.setTitle("new title");
         String taskJson = httpTaskServer.getGson().toJson(newTask);
-        URI uri = URI.create("http://localhost:8080/tasks");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .POST(HttpRequest.BodyPublishers.ofString(taskJson))
@@ -86,7 +87,7 @@ class TaskHttpHandlerTest {
     @Test
     public void testPostTask() throws IOException, InterruptedException {
         String taskJson = httpTaskServer.getGson().toJson(task);
-        URI uri = URI.create("http://localhost:8080/tasks");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .POST(HttpRequest.BodyPublishers.ofString(taskJson))
@@ -102,7 +103,7 @@ class TaskHttpHandlerTest {
     @Test
     public void testGetTasks() throws IOException, InterruptedException {
         taskManager.addTask(task);
-        URI uri = URI.create("http://localhost:8080/tasks");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -119,7 +120,7 @@ class TaskHttpHandlerTest {
     @Test
     public void testGetTaskWithCorrectId() throws IOException, InterruptedException {
         taskManager.addTask(task);
-        URI uri = URI.create("http://localhost:8080/tasks/0");
+        URI uri = URI.create(BASE_URI.concat("/0"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -134,7 +135,7 @@ class TaskHttpHandlerTest {
     @Test
     public void testGetTaskWithInvalidId() throws IOException, InterruptedException {
         taskManager.addTask(task);
-        URI uri = URI.create("http://localhost:8080/tasks/1");
+        URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -147,7 +148,7 @@ class TaskHttpHandlerTest {
     @Test
     public void testDeleteTaskWithCorrectId() throws IOException, InterruptedException {
         taskManager.addTask(task);
-        URI uri = URI.create("http://localhost:8080/tasks/0");
+        URI uri = URI.create(BASE_URI.concat("/0"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .DELETE()
@@ -161,7 +162,7 @@ class TaskHttpHandlerTest {
     @Test
     public void testDeleteTaskWithInvalidId() throws IOException, InterruptedException {
         taskManager.addTask(task);
-        URI uri = URI.create("http://localhost:8080/tasks/1");
+        URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .DELETE()

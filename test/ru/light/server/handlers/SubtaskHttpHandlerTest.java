@@ -28,6 +28,7 @@ public class SubtaskHttpHandlerTest {
     private HttpTaskServer httpTaskServer;
     private TaskManager taskManager;
     private SubTask subtask;
+    private static final String BASE_URI = "http://localhost:8080/subtasks";
 
     @BeforeEach
     public void setup() {
@@ -55,7 +56,7 @@ public class SubtaskHttpHandlerTest {
         SubTask newTask = (SubTask) subtask.clone();
         newTask.setId(null);
         String taskJson = httpTaskServer.getGson().toJson(newTask);
-        URI uri = URI.create("http://localhost:8080/subtasks");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .POST(HttpRequest.BodyPublishers.ofString(taskJson))
@@ -73,7 +74,7 @@ public class SubtaskHttpHandlerTest {
         SubTask newTask = (SubTask) subtask.clone();
         newTask.setTitle("new title");
         String taskJson = httpTaskServer.getGson().toJson(newTask);
-        URI uri = URI.create("http://localhost:8080/subtasks");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .POST(HttpRequest.BodyPublishers.ofString(taskJson))
@@ -89,7 +90,7 @@ public class SubtaskHttpHandlerTest {
     @Test
     public void testPostSubTask() throws IOException, InterruptedException {
         String taskJson = httpTaskServer.getGson().toJson(subtask);
-        URI uri = URI.create("http://localhost:8080/subtasks");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .POST(HttpRequest.BodyPublishers.ofString(taskJson))
@@ -105,7 +106,7 @@ public class SubtaskHttpHandlerTest {
     @Test
     public void testGetSubTasks() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
-        URI uri = URI.create("http://localhost:8080/subtasks");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -122,7 +123,7 @@ public class SubtaskHttpHandlerTest {
     @Test
     public void testGetSubTaskWithCorrectId() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
-        URI uri = URI.create("http://localhost:8080/subtasks/1");
+        URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -137,7 +138,7 @@ public class SubtaskHttpHandlerTest {
     @Test
     public void testGetSubTaskWithInvalidId() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
-        URI uri = URI.create("http://localhost:8080/subtasks/2");
+        URI uri = URI.create(BASE_URI.concat("/2"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -150,7 +151,7 @@ public class SubtaskHttpHandlerTest {
     @Test
     public void testDeleteSubTaskWithCorrectId() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
-        URI uri = URI.create("http://localhost:8080/subtasks/1");
+        URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .DELETE()
@@ -164,7 +165,7 @@ public class SubtaskHttpHandlerTest {
     @Test
     public void testDeleteSubTaskWithInvalidId() throws IOException, InterruptedException {
         taskManager.addTask(subtask);
-        URI uri = URI.create("http://localhost:8080/subtasks/2");
+        URI uri = URI.create(BASE_URI.concat("/2"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .DELETE()

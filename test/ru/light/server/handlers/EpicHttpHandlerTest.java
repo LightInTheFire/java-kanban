@@ -28,6 +28,7 @@ public class EpicHttpHandlerTest {
     private HttpTaskServer httpTaskServer;
     private TaskManager taskManager;
     private EpicTask epic;
+    private static final String BASE_URI = "http://localhost:8080/epics";
 
     @BeforeEach
     public void setup() {
@@ -48,7 +49,7 @@ public class EpicHttpHandlerTest {
     @Test
     public void testPostEpic() throws IOException, InterruptedException {
         String taskJson = httpTaskServer.getGson().toJson(epic);
-        URI uri = URI.create("http://localhost:8080/epics");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .POST(HttpRequest.BodyPublishers.ofString(taskJson))
@@ -72,7 +73,7 @@ public class EpicHttpHandlerTest {
                 Duration.ofMinutes(10),
                 LocalDateTime.of(2021, 1, 1, 1, 1)));
 
-        URI uri = URI.create("http://localhost:8080/epics/0/subtasks");
+        URI uri = URI.create(BASE_URI.concat("/0/subtasks"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -89,7 +90,7 @@ public class EpicHttpHandlerTest {
     @Test
     public void testGetAllSubtasksOfEpicWithInvalidId() throws IOException, InterruptedException {
         taskManager.addTask(epic);
-        URI uri = URI.create("http://localhost:8080/epics/112");
+        URI uri = URI.create(BASE_URI.concat("/112"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -102,7 +103,7 @@ public class EpicHttpHandlerTest {
     @Test
     public void testGetEpics() throws IOException, InterruptedException {
         taskManager.addTask(epic);
-        URI uri = URI.create("http://localhost:8080/epics");
+        URI uri = URI.create(BASE_URI);
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -118,7 +119,7 @@ public class EpicHttpHandlerTest {
     @Test
     public void testGetEpicWithCorrectId() throws IOException, InterruptedException {
         taskManager.addTask(epic);
-        URI uri = URI.create("http://localhost:8080/epics/0");
+        URI uri = URI.create(BASE_URI.concat("/0"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -133,7 +134,7 @@ public class EpicHttpHandlerTest {
     @Test
     public void testGetEpicWithInvalidId() throws IOException, InterruptedException {
         taskManager.addTask(epic);
-        URI uri = URI.create("http://localhost:8080/epics/1");
+        URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .GET()
@@ -146,7 +147,7 @@ public class EpicHttpHandlerTest {
     @Test
     public void testDeleteEpicWithCorrectId() throws IOException, InterruptedException {
         taskManager.addTask(epic);
-        URI uri = URI.create("http://localhost:8080/epics/0");
+        URI uri = URI.create(BASE_URI.concat("/0"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .DELETE()
@@ -160,7 +161,7 @@ public class EpicHttpHandlerTest {
     @Test
     public void testDeleteEpicWithInvalidId() throws IOException, InterruptedException {
         taskManager.addTask(epic);
-        URI uri = URI.create("http://localhost:8080/epics/1");
+        URI uri = URI.create(BASE_URI.concat("/1"));
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             HttpRequest request = HttpRequest.newBuilder(uri)
                     .DELETE()
